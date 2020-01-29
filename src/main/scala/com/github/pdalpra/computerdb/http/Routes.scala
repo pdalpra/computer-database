@@ -46,14 +46,12 @@ object Routes {
     )
 
     private def miscRoutes = HttpRoutes.of[F] {
-      case GET -> Root / "version" =>
-        Ok(BuildInfo.toJson, `Content-Type`(MediaType.application.json))
+      case GET -> Root / "version" => Ok(BuildInfo.toJson, `Content-Type`(MediaType.application.json))
     }
 
     private def computerReadRoutes = HttpRoutes.of[F] {
-      case req @ GET -> Root :? PageNumber(pageOpt) +& PageSize(pageSizeOpt) +& Sort(sortOpt) +& SearchQuery(query) +& SortOrder(
-            orderOpt
-          ) =>
+      case req @ GET -> Root :? PageNumber(pageOpt) +& PageSize(pageSizeOpt) +&
+            Sort(sortOpt) +& SortOrder(orderOpt) +& SearchQuery(query) =>
         val page  = pageOpt.getOrElse(Page.DefaultPage)
         val sort  = sortOpt.getOrElse(ComputerSort.Name)
         val order = orderOpt.getOrElse(Order.Asc)
@@ -81,15 +79,15 @@ object Routes {
 
     private def computerWriteRoutes = HttpRoutes.of[F] {
       case req @ POST -> Root =>
-        val onFormSuccess = (computer: UnsavedComputer) =>
-          computerRepository.insert(computer) *> redirectToHome.withFlashData(s"Computer ${computer.name} has been created")
+        def onFormSuccess(computer: UnsavedComputer) =
+          computerRepository.insert(computer) *>
+            redirectToHome.withFlashData(s"Computer ${computer.name} has been created")
 
-        val onFormError = (form: UrlForm) =>
-          (errors: NonEmptyChain[FieldError]) =>
-            for {
-              companies <- companyRepository.fetchAll
-              response  <- BadRequest(Forms.creationForm(companies, InvalidFormState(form, errors).some))
-            } yield response
+        def onFormError(form: UrlForm)(errors: NonEmptyChain[FieldError]) =
+          for {
+            companies <- companyRepository.fetchAll
+            response  <- BadRequest(Forms.creationForm(companies, InvalidFormState(form, errors).some))
+          } yield response
 
         for {
           urlForm     <- req.as[UrlForm]
@@ -98,16 +96,15 @@ object Routes {
         } yield response
 
       case req @ POST -> Root / ComputerId(id) =>
-        val onFormSuccess = (id: Computer.Id) =>
-          (computer: UnsavedComputer) =>
-            computerRepository.update(id, computer) *> redirectToHome.withFlashData(s"Computer ${computer.name} has been updated")
+        def onFormSuccess(id: Computer.Id)(computer: UnsavedComputer) =
+          computerRepository.update(id, computer) *>
+            redirectToHome.withFlashData(s"Computer ${computer.name} has been updated")
 
-        val onFormError = (computer: Computer, form: UrlForm) =>
-          (errors: NonEmptyChain[FieldError]) =>
-            for {
-              companies <- companyRepository.fetchAll
-              response  <- BadRequest(Forms.editionForm(computer, companies, InvalidFormState(form, errors).some))
-            } yield response
+        def onFormError(computer: Computer, form: UrlForm)(errors: NonEmptyChain[FieldError]) =
+          for {
+            companies <- companyRepository.fetchAll
+            response  <- BadRequest(Forms.editionForm(computer, companies, InvalidFormState(form, errors).some))
+          } yield response
 
         (for {
           computer    <- OptionT(computerRepository.fetchOne(id))

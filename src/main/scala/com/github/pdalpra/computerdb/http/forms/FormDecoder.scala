@@ -33,15 +33,15 @@ object DerivedFormDecoder {
       override def decodeForm(form: UrlForm): FormResult[HNil] = HNil.validNec
     }
 
-  implicit def hlistDecoder[K <: Symbol, Head, Tail <: HList](
-      implicit w: Witness.Aux[K],
+  implicit def hlistDecoder[FieldName <: Symbol, Head, Tail <: HList](
+      implicit w: Witness.Aux[FieldName],
       hEncoder: Lazy[FieldDecoder[Head]],
       tEncoder: DerivedFormDecoder[Tail]
-  ): DerivedFormDecoder[FieldType[K, Head] :: Tail] =
-    new DerivedFormDecoder[FieldType[K, Head] :: Tail] {
-      override def decodeForm(form: UrlForm): FormResult[FieldType[K, Head] :: Tail] = {
+  ): DerivedFormDecoder[FieldType[FieldName, Head] :: Tail] =
+    new DerivedFormDecoder[FieldType[FieldName, Head] :: Tail] {
+      override def decodeForm(form: UrlForm): FormResult[FieldType[FieldName, Head] :: Tail] = {
         (hEncoder.value.decodeField(form, w.value.name).toValidatedNec, tEncoder.decodeForm(form))
-          .mapN((head, tail) => field[K](head) :: tail)
+          .mapN((head, tail) => field[FieldName](head) :: tail)
       }
     }
 

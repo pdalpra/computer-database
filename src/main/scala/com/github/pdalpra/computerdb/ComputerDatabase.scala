@@ -45,7 +45,7 @@ class ComputerDatabase[F[_]: ConcurrentEffect: ContextShift: Timer] {
       _           <- computerRepository.loadAll(initialData.computers)
       _           <- logger.info("Loaded all reference data into the database.")
       _           <- scheduleDataReset(computerRepository, initialData.computers, config.db.restoreInitial)
-      server      <- server(routes, config.server, appResources.serveExecutionContext).start
+      server      <- server(routes, config.server, appResources.serverExecutionContext).start
       _           <- logger.info(s"Computer database started on port ${config.server.port}")
       _           <- server.join
     } yield ()
@@ -84,5 +84,5 @@ class ComputerDatabase[F[_]: ConcurrentEffect: ContextShift: Timer] {
       transactor   <- H2Transactor.newH2Transactor[F](config.db.url, config.db.username, config.db.username, connectionEC, blocker)
     } yield AppResources(transactor, blocker, serverEC)
 
-  private case class AppResources(transactor: Transactor[F], blocker: Blocker, serveExecutionContext: ExecutionContext)
+  private case class AppResources(transactor: Transactor[F], blocker: Blocker, serverExecutionContext: ExecutionContext)
 }
