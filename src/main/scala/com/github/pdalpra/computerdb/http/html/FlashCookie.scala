@@ -10,7 +10,7 @@ import org.http4s.{ Http, Request, Response, ResponseCookie }
 
 private[html] object FlashCookie {
 
-  private val flashCookieName = "http4s-flash"
+  val flashCookieName: String = "http4s-flash"
 
   def apply[F[_]: Functor, G[_]: Functor](http: Http[F, G]): Http[F, G] =
     Kleisli { request: Request[G] =>
