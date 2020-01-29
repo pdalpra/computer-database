@@ -69,7 +69,8 @@ libraryDependencies ++= Seq(
   // Testing
   "org.scalatest"     %% "scalatest"       % "3.2.0"   % "test,it",
   "org.scalatestplus" %% "scalacheck-1-14" % "3.2.0.0" % "test",
-  "org.scalacheck"    %% "scalacheck"      % "1.14.3"  % "test"
+  "org.scalacheck"    %% "scalacheck"      % "1.14.3"  % "test",
+  "org.http4s"        %% "http4s-laws"     % http4sVersion % "test"
 )
 
 addCommandAlias(

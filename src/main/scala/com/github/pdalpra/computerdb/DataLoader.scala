@@ -1,4 +1,4 @@
-package com.github.pdalpra.computerdb.db
+package com.github.pdalpra.computerdb
 
 import com.github.pdalpra.computerdb.model._
 
