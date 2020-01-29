@@ -5,8 +5,7 @@ pull_request_rules:
       - "#approved-reviews-by>=1"
     actions:
       merge:
-        method: squash
-
+        method: merge
 
   # Automatic merging on trivial scala-steward PRs
   - name: automatic squash merge for scala-steward pull requests affecting build.sbt
@@ -17,7 +16,7 @@ pull_request_rules:
       - files=build.sbt
     actions:
       merge:
-        method: squash
+        method: merge
   - name: automatic squash merge for scala-steward pull requests affecting project plugins.sbt
     conditions:
       - author=scala-steward
@@ -26,7 +25,7 @@ pull_request_rules:
       - files=project/plugins.sbt
     actions:
       merge:
-        method: squash
+        method: merge
   - name: automatic squash merge for scala-steward pull requests affecting project build.properties
     conditions:
       - author=scala-steward
@@ -35,7 +34,7 @@ pull_request_rules:
       - files=project/build.properties
     actions:
       merge:
-        method: squash
+        method: merge
   - name: automatic squash merge for scala-steward pull requests affecting .scalafmt.conf
     conditions:
       - author=scala-steward
@@ -44,8 +43,7 @@ pull_request_rules:
       - files=.scalafmt.conf
     actions:
       merge:
-        method: squash
-
+        method: merge
 
   # Semi automatic merging if scala-steward PRs get more complex
   - name: semi-automatic merge for scala-steward pull requests
@@ -55,7 +53,7 @@ pull_request_rules:
       - "#approved-reviews-by>=1"
     actions:
       merge:
-        method: squash
+        method: merge
 pull_request_rules:
   - name: Automatic merge on approval
     conditions:
