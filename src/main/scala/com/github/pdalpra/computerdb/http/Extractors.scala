@@ -22,7 +22,7 @@ private[http] trait Extractors {
       .emap(
         ComputerSort
           .withValueEither(_)
-          .fold(err => ParseResult.fail("sort", err.getMessage), ParseResult.success)
+          .fold(err => ParseResult.fail("sort", err.getMessage()), ParseResult.success)
       )
 
   private implicit val orderDecoder: QueryParamDecoder[Order] =
@@ -30,7 +30,7 @@ private[http] trait Extractors {
       .emap(
         Order
           .withNameEither(_)
-          .fold(err => ParseResult.fail("order", err.getMessage), ParseResult.success)
+          .fold(err => ParseResult.fail("order", err.getMessage()), ParseResult.success)
       )
 
   object PageNumber  extends OptionalQueryParamDecoderMatcher[Page.Number]("p")

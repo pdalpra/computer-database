@@ -51,8 +51,8 @@ object Forms {
 
   private def computerForm(targetUrl: String, saveMessage: String, context: FormContext) = {
     val name         = context.name.map(_.value).getOrElse("")
-    val introduced   = context.introduced.map(_.toString).getOrElse("")
-    val discontinued = context.discontinued.map(_.toString).getOrElse("")
+    val introduced   = context.introduced.map(_.toString()).getOrElse("")
+    val discontinued = context.discontinued.map(_.toString()).getOrElse("")
 
     form(action := targetUrl, method := "POST")(
       fieldset(
@@ -96,7 +96,7 @@ object Forms {
           option(`class` := "blank", value := "")("-- Choose a company --"),
           companies.map { company =>
             val isSelected = current.collect { case id if id === company.id => selected := "" }
-            option(value := company.id.toString, isSelected)(company.name.toString)
+            option(value := company.id.toString(), isSelected)(company.name.toString())
           }
         )
       )

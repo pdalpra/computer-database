@@ -5,7 +5,7 @@ import java.time.format.DateTimeParseException
 
 import cats.data.Validated
 import cats.implicits._
-import eu.timepit.refined.api._
+import eu.timepit.refined.api.{ RefType, Validate }
 import mouse.string._
 
 trait StringDecoder[A] { self =>
