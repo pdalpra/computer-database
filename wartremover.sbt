@@ -1,7 +1,8 @@
 wartremoverErrors in (Compile, compile) := Warts.allBut(
   Wart.Any,
   Wart.ImplicitParameter,
-  Wart.Nothing
+  Wart.Nothing,
+  Wart.StringPlusAny // Buggy with Scala 2.13
 )
 
 wartremoverErrors in (Test, compile) := (wartremoverErrors in (Compile, compile)).value.diff(

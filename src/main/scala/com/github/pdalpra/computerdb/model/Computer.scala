@@ -11,7 +11,7 @@ object Computer {
     implicit val eq: Eq[Id] = derived.semi.eq
   }
   final case class Id(value: UniqueId) {
-    override def toString: String = value.toString
+    override def toString: String = value.toString()
   }
 }
 final case class Computer(
