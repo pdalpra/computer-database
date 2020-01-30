@@ -20,6 +20,7 @@ object Config {
   final case class Server(
       port: UserPortNumber,
       idleTimeout: FiniteDuration,
+      responseHeaderTimeout: FiniteDuration,
       threadPoolSize: PosInt
   )
 
@@ -31,7 +32,7 @@ object Config {
   }
   final case class Database(
       url: String,
-      poolSize: PosInt,
+      maxConnections: PosInt,
       username: String,
       password: String,
       readOnlyComputers: List[Computer.Id],
