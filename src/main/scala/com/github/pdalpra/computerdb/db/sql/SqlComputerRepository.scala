@@ -14,10 +14,11 @@ import doobie.refined.implicits._
 object SqlComputerRepository {
   private val DefaultPageSize: Page.Number = Page.Number.unsafeFrom(10)
 
-  def apply[F[_]: Sync](transactor: Transactor[F]): ComputerRepository[F] =
-    new DefaultSqlComputerRepository[F](transactor)
+  def apply[F[_]: Sync](transactor: Transactor[F], readOnlyComputers: List[Computer.Id]): ComputerRepository[F] =
+    new DefaultSqlComputerRepository[F](transactor, readOnlyComputers)
 
-  private class DefaultSqlComputerRepository[F[_]: Sync](transactor: Transactor[F]) extends ComputerRepository[F] {
+  private class DefaultSqlComputerRepository[F[_]: Sync](transactor: Transactor[F], readOnlyComputers: List[Computer.Id])
+      extends ComputerRepository[F] {
 
     override def fetchOne(id: Computer.Id): F[Option[Computer]] =
       (baseSelect ++ fr"where computer.id = $id").query[Computer].option.transact(transactor)
@@ -53,7 +54,8 @@ object SqlComputerRepository {
               where id = $id
            """
 
-      updateQuery.update.run.transact(transactor).void
+      if (!readOnlyComputers.contains(id)) updateQuery.update.run.transact(transactor).void
+      else ().pure[F]
     }
 
     override def insert(computer: UnsavedComputer): F[Computer] =
@@ -63,7 +65,8 @@ object SqlComputerRepository {
       } yield computer).transact(transactor)
 
     override def deleteOne(id: Computer.Id): F[Unit] =
-      sql"delete from computer where id = $id".update.run.transact(transactor).void
+      if (!readOnlyComputers.contains(id)) sql"delete from computer where id = $id".update.run.transact(transactor).void
+      else ().pure[F]
 
     override def loadAll(computers: List[UnsavedComputer]): F[Unit] =
       (for {
