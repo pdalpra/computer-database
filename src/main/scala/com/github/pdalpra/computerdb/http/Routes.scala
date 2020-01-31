@@ -46,6 +46,7 @@ object Routes {
     )
 
     private def miscRoutes = HttpRoutes.of[F] {
+      case GET -> Root             => redirectToHome
       case GET -> Root / "version" => Ok(BuildInfo.toJson, `Content-Type`(MediaType.application.json))
     }
 
