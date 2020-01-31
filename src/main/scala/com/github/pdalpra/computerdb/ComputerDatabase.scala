@@ -13,6 +13,7 @@ import cats.effect.implicits._
 import cats.implicits._
 import doobie._
 import doobie.h2.H2Transactor
+import doobie.h2.syntax.h2transactor._
 import doobie.util.ExecutionContexts
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 import org.http4s.HttpApp
@@ -69,6 +70,9 @@ class ComputerDatabase[F[_]: ConcurrentEffect: ContextShift: Timer] {
   private def server(httpApp: HttpApp[F], config: Config.Server, serverExecutionContext: ExecutionContext): F[Unit] =
     BlazeServerBuilder[F]
       .withExecutionContext(serverExecutionContext)
+      .withNio2(true)
+      .withTcpNoDelay(true)
+      .withResponseHeaderTimeout(config.responseHeaderTimeout)
       .withIdleTimeout(config.idleTimeout)
       .withHttpApp(httpApp)
       .bindHttp(config.port.value, "0.0.0.0")
@@ -78,10 +82,11 @@ class ComputerDatabase[F[_]: ConcurrentEffect: ContextShift: Timer] {
 
   private def appResources(config: Config): Resource[F, AppResources] =
     for {
-      blocker      <- Blocker[F]
-      serverEC     <- ExecutionContexts.fixedThreadPool(config.server.threadPoolSize.value)
-      connectionEC <- ExecutionContexts.fixedThreadPool(config.db.poolSize.value)
-      transactor   <- H2Transactor.newH2Transactor[F](config.db.url, config.db.username, config.db.username, connectionEC, blocker)
+      blocker       <- Blocker[F]
+      serverEC      <- ExecutionContexts.fixedThreadPool(config.server.threadPoolSize.value)
+      connectionEC  <- ExecutionContexts.cachedThreadPool
+      rawTransactor = H2Transactor.newH2Transactor[F](config.db.url, config.db.username, config.db.username, connectionEC, blocker)
+      transactor    <- rawTransactor.evalTap(_.setMaxConnections(config.db.maxConnections.value))
     } yield AppResources(transactor, blocker, serverEC)
 
   private case class AppResources(transactor: Transactor[F], blocker: Blocker, serverExecutionContext: ExecutionContext)
