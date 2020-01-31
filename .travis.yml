@@ -1,7 +1,7 @@
 language: scala
 
 jdk:
-  - openjdk8
+  - openjdk11
 
 cache:
   directories:
@@ -9,7 +9,10 @@ cache:
     - $HOME/.sbt
     - $HOME/.cache/coursier
 
-script: sbt scalafmtSbtCheck scalafmtCheckAll test
+script: sbt ci-checks
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 
 # whitelist only master branch and tags
 branches:
