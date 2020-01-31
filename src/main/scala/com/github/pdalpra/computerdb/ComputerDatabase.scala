@@ -35,8 +35,8 @@ class ComputerDatabase[F[_]: ConcurrentEffect: ContextShift: Timer] {
   private def setup(appResources: AppResources, config: Config): F[Unit] = {
     val initSchema         = SchemaInitializer[F](appResources.transactor)
     val dataLoader         = DataLoader[F](appResources.blocker)
-    val companyRepository  = SqlCompanyRepository[F](appResources.transactor)
-    val computerRepository = SqlComputerRepository[F](appResources.transactor, config.db.readOnlyComputers)
+    val companyRepository  = new SqlCompanyRepository[F](appResources.transactor)
+    val computerRepository = new SqlComputerRepository[F](appResources.transactor, config.db.readOnlyComputers)
     val routes             = Routes[F](computerRepository, companyRepository, appResources.blocker)
 
     for {

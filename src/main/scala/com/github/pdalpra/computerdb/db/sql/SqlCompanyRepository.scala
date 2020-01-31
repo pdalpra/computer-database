@@ -10,24 +10,17 @@ import doobie._
 import doobie.implicits._
 import doobie.refined.implicits._
 
-object SqlCompanyRepository {
+class SqlCompanyRepository[F[_]: Sync](transactor: Transactor[F]) extends CompanyRepository[F] {
 
-  def apply[F[_]: Sync](transactor: Transactor[F]): CompanyRepository[F] =
-    new DefaultSqlCompanyRepository[F](transactor)
+  override def fetchAll: F[List[Company]] =
+    sql"select * from company order by id"
+      .query[Company]
+      .to[List]
+      .transact(transactor)
 
-  private class DefaultSqlCompanyRepository[F[_]: Sync](transactor: Transactor[F]) extends CompanyRepository[F] {
-
-    override def fetchAll: F[List[Company]] =
-      sql"select * from company order by id"
-        .query[Company]
-        .to[List]
-        .transact(transactor)
-
-    override def loadAll(companies: List[NonEmptyString]): F[Unit] =
-      Update[NonEmptyString]("insert into company (name) values (?)")
-        .updateMany(companies)
-        .transact(transactor)
-        .void
-  }
-
+  override def loadAll(companies: List[NonEmptyString]): F[Unit] =
+    Update[NonEmptyString]("insert into company (name) values (?)")
+      .updateMany(companies)
+      .transact(transactor)
+      .void
 }
