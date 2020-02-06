@@ -11,7 +11,7 @@ import com.github.pdalpra.computerdb.http.html._
 import com.github.pdalpra.computerdb.model._
 
 import cats.data.{ NonEmptyChain, OptionT }
-import cats.effect.{ Blocker, ContextShift, Effect }
+import cats.effect.{ Blocker, ContextShift, Sync }
 import cats.implicits._
 import org.http4s._
 import org.http4s.dsl.Http4sDsl
@@ -23,14 +23,14 @@ import org.http4s.server.staticcontent._
 
 object Routes {
 
-  def apply[F[_]: Effect: ContextShift](
+  def apply[F[_]: Sync: ContextShift](
       computerRepository: ComputerRepository[F],
       companyRepository: CompanyRepository[F],
       blocker: Blocker
   ): HttpApp[F] =
     new Routes[F](computerRepository, companyRepository, blocker).httpApp
 
-  private class Routes[F[_]: Effect: ContextShift](
+  private class Routes[F[_]: Sync: ContextShift](
       computerRepository: ComputerRepository[F],
       companyRepository: CompanyRepository[F],
       blocker: Blocker
