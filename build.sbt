@@ -32,6 +32,9 @@ libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-effect" % "2.1.0",
   "org.typelevel" %% "kittens"     % "2.0.0",
   "org.typelevel" %% "mouse"       % "0.24",
+  // ZIO
+  "dev.zio" %% "zio"              % "1.0.0-RC17",
+  "dev.zio" %% "zio-interop-cats" % "2.0.0.0-RC10",
   // Http4s
   "org.http4s" %% "http4s-dsl"          % http4sVersion,
   "org.http4s" %% "http4s-blaze-server" % http4sVersion,
