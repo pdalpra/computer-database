@@ -63,7 +63,7 @@ object ComputersListView {
   private def pageNavigation(context: Context) =
     div(id := "pagination", `class` := "pagination")(
       ul(
-        pageNavButton(context.page.prev, context, "← Previous", "prev"),
+        pageNavButton(context.page.previous, context, "← Previous", "prev"),
         li(`class` := "current")(
           a(s"Displaying ${context.page.offset + 1} to ${context.page.offset + context.page.items.size} of ${context.page.total}")
         ),

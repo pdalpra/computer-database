@@ -12,7 +12,7 @@ import doobie.implicits.javatime._
 import doobie.refined.implicits._
 
 object SqlComputerRepository {
-  private val DefaultPageSize: Page.Number = Page.Number.unsafeFrom(10)
+  private val DefaultPageSize: Page.Size = Page.Size.unsafeFrom(10)
 }
 class SqlComputerRepository[F[_]: Sync](transactor: Transactor[F], readOnlyComputers: List[Computer.Id]) extends ComputerRepository[F] {
 
@@ -27,7 +27,7 @@ class SqlComputerRepository[F[_]: Sync](transactor: Transactor[F], readOnlyCompu
       nameFilter: Option[NonEmptyString]
   ): F[Page[Computer]] = {
     val limit  = pageSize.getOrElse(SqlComputerRepository.DefaultPageSize)
-    val offset = page.value * limit.value
+    val offset = (page.value - 1) * limit.value
 
     val filterFragment = Fragments.whereAndOpt(nameFilter.map(name => fr"lower(computer.name) like ${s"%$name%"}"))
     val sortFragment   = fr"order by " ++ Fragment.const(sort.column) ++ Fragment.const(order.entryName)
