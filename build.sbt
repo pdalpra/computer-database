@@ -8,6 +8,7 @@ lazy val It = config("it") extend Test
 configs(It)
 inConfig(It)(Defaults.itSettings)
 inConfig(It)(org.scalafmt.sbt.ScalafmtPlugin.scalafmtConfigSettings)
+fork in It := true
 
 buildInfoPackage := "com.github.pdalpra.computerdb"
 buildInfoObject := "ComputerDatabaseBuildInfo"
