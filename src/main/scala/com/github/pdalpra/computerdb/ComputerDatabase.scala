@@ -8,6 +8,7 @@ import com.github.pdalpra.computerdb.db.sql._
 import com.github.pdalpra.computerdb.http.Routes
 import com.github.pdalpra.computerdb.model.UnsavedComputer
 
+import cats.Applicative
 import cats.effect._
 import cats.effect.implicits._
 import cats.implicits._
@@ -61,7 +62,7 @@ class ComputerDatabase[F[_]: ConcurrentEffect: ContextShift: Timer] {
     if (config.enabled)
       schedule(resetData, config.frequency, "Failed to reset computer data")
     else
-      ().pure[F]
+      Applicative[F].unit
   }
 
   private def schedule(action: F[Unit], interval: FiniteDuration, errorMessage: String): F[Unit] =
