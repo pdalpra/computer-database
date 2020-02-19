@@ -4,6 +4,7 @@ import com.github.pdalpra.computerdb.db._
 import com.github.pdalpra.computerdb.db.sql.DoobieInstances._
 import com.github.pdalpra.computerdb.model._
 
+import cats.Applicative
 import cats.effect.Sync
 import cats.implicits._
 import doobie._
@@ -51,7 +52,7 @@ class SqlComputerRepository[F[_]: Sync](transactor: Transactor[F], readOnlyCompu
            """
 
     if (!readOnlyComputers.contains(id)) updateQuery.update.run.transact(transactor).void
-    else ().pure[F]
+    else Applicative[F].unit
   }
 
   override def insert(computer: UnsavedComputer): F[Computer] =
@@ -62,7 +63,7 @@ class SqlComputerRepository[F[_]: Sync](transactor: Transactor[F], readOnlyCompu
 
   override def deleteOne(id: Computer.Id): F[Unit] =
     if (!readOnlyComputers.contains(id)) sql"delete from computer where id = $id".update.run.transact(transactor).void
-    else ().pure[F]
+    else Applicative[F].unit
 
   override def loadAll(computers: List[UnsavedComputer]): F[Unit] =
     (for {
