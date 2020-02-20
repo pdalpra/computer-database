@@ -1,6 +1,5 @@
 package com.github.pdalpra.computerdb.model
 
-import cats.implicits._
 import eu.timepit.refined.api._
 import eu.timepit.refined.numeric._
 
@@ -19,8 +18,7 @@ final case class Page[A](items: List[A], page: Page.Number, offset: Int, total: 
     Page.Number.from(page.value - 1).toOption
 
   def next: Option[Page.Number] =
-    if (offset + items.size < total)
-      Page.Number.unsafeFrom(page.value + 1).some
-    else
-      None
+    Option.when(offset + items.size < total) {
+      Page.Number.unsafeFrom(page.value + 1)
+    }
 }
