@@ -8,7 +8,6 @@ import com.github.pdalpra.computerdb.db.sql._
 import com.github.pdalpra.computerdb.http.Routes
 import com.github.pdalpra.computerdb.model.UnsavedComputer
 
-import cats.Applicative
 import cats.effect._
 import cats.effect.implicits._
 import cats.implicits._
@@ -57,13 +56,11 @@ class ComputerDatabase[F[_]: ConcurrentEffect: ContextShift: Timer] {
       computerRepository: ComputerRepository[F],
       defaultComputers: List[UnsavedComputer],
       config: Config.Database.RestoreInitial
-  ): F[Unit] = {
-    val resetData = computerRepository.loadAll(defaultComputers) *> logger.info("Computer data reset to reference data.")
-    if (config.enabled)
+  ): F[Unit] =
+    Sync[F].whenA(config.enabled) {
+      val resetData = computerRepository.loadAll(defaultComputers) *> logger.info("Computer data reset to reference data.")
       schedule(resetData, config.frequency, "Failed to reset computer data")
-    else
-      Applicative[F].unit
-  }
+    }
 
   private def schedule(action: F[Unit], interval: FiniteDuration, errorMessage: String): F[Unit] =
     (Timer[F].sleep(interval) >> action.handleErrorWith(ex => logger.error(s"$errorMessage: $ex"))).foreverM.start.void

@@ -4,7 +4,6 @@ import com.github.pdalpra.computerdb.db._
 import com.github.pdalpra.computerdb.db.sql.DoobieInstances._
 import com.github.pdalpra.computerdb.model._
 
-import cats.Applicative
 import cats.effect.Sync
 import cats.implicits._
 import doobie._
@@ -41,9 +40,10 @@ class SqlComputerRepository[F[_]: Sync](transactor: Transactor[F], readOnlyCompu
     } yield Page(list, page, offset, rowsCount)).transact(transactor)
   }
 
-  override def update(id: Computer.Id, computer: UnsavedComputer): F[Unit] = {
-    val updateQuery =
-      sql"""update computer
+  override def update(id: Computer.Id, computer: UnsavedComputer): F[Unit] =
+    Sync[F].whenA(!readOnlyComputers.contains(id)) {
+      val updateQuery =
+        sql"""update computer
               set name = ${computer.name},
               introduced = ${computer.introduced},
               discontinued = ${computer.discontinued},
@@ -51,9 +51,8 @@ class SqlComputerRepository[F[_]: Sync](transactor: Transactor[F], readOnlyCompu
               where id = $id
            """
 
-    if (!readOnlyComputers.contains(id)) updateQuery.update.run.transact(transactor).void
-    else Applicative[F].unit
-  }
+      updateQuery.update.run.transact(transactor)
+    }
 
   override def insert(computer: UnsavedComputer): F[Computer] =
     (for {
@@ -62,8 +61,9 @@ class SqlComputerRepository[F[_]: Sync](transactor: Transactor[F], readOnlyCompu
     } yield computer).transact(transactor)
 
   override def deleteOne(id: Computer.Id): F[Unit] =
-    if (!readOnlyComputers.contains(id)) sql"delete from computer where id = $id".update.run.transact(transactor).void
-    else Applicative[F].unit
+    Sync[F].whenA(!readOnlyComputers.contains(id)) {
+      sql"delete from computer where id = $id".update.run.transact(transactor)
+    }
 
   override def loadAll(computers: List[UnsavedComputer]): F[Unit] =
     (for {
