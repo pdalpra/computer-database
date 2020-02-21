@@ -67,7 +67,7 @@ libraryDependencies ++= Seq(
   // Misc
   "com.beachape" %% "enumeratum" % "1.5.15",
   // Testing
-  "org.scalatest"     %% "scalatest"       % "3.1.0"   % "test,it",
+  "org.scalatest"     %% "scalatest"       % "3.1.1"   % "test,it",
   "org.scalatestplus" %% "scalacheck-1-14" % "3.1.0.1" % "test",
   "org.scalacheck"    %% "scalacheck"      % "1.14.3"  % "test"
 )
