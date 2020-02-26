@@ -49,7 +49,7 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-generic" % circeVersion,
   "io.circe" %% "circe-parser"  % circeVersion,
   "io.circe" %% "circe-refined" % circeVersion,
-  "io.circe" %% "circe-fs2"     % "0.12.0",
+  "io.circe" %% "circe-fs2"     % "0.13.0",
   // Doobie
   "org.tpolecat" %% "doobie-core" % doobieVersion,
   "org.tpolecat" %% "doobie-h2"   % doobieVersion,
