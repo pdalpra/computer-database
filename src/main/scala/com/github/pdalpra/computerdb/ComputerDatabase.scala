@@ -27,17 +27,19 @@ class ComputerDatabase[F[_]: ConcurrentEffect: ContextShift: Timer] {
   private val configSource = ConfigSource.default.at("app")
 
   def program: F[Unit] =
-    for {
-      config <- configSource.loadF[F, Config]
-      _      <- appResources(config).use(setup(_, config))
-    } yield ()
+    Blocker[F].use { blocker =>
+      for {
+        config <- configSource.loadF[F, Config](blocker)
+        _      <- appResources(blocker, config).use(setup(_, blocker, config))
+      } yield ()
+    }
 
-  private def setup(appResources: AppResources, config: Config): F[Unit] = {
+  private def setup(appResources: AppResources, blocker: Blocker, config: Config): F[Unit] = {
     val initSchema         = SchemaInitializer[F](appResources.transactor)
-    val dataLoader         = DataLoader[F](appResources.blocker)
+    val dataLoader         = DataLoader[F](blocker)
     val companyRepository  = new SqlCompanyRepository[F](appResources.transactor)
     val computerRepository = new SqlComputerRepository[F](appResources.transactor, config.db.readOnlyComputers)
-    val routes             = Routes[F](computerRepository, companyRepository, appResources.blocker)
+    val routes             = Routes[F](computerRepository, companyRepository, blocker)
 
     for {
       _           <- initSchema.initSchema
@@ -78,14 +80,13 @@ class ComputerDatabase[F[_]: ConcurrentEffect: ContextShift: Timer] {
       .compile
       .drain
 
-  private def appResources(config: Config): Resource[F, AppResources] =
+  private def appResources(blocker: Blocker, config: Config): Resource[F, AppResources] =
     for {
-      blocker       <- Blocker[F]
       serverEC      <- ExecutionContexts.fixedThreadPool(config.server.threadPoolSize.value)
       connectionEC  <- ExecutionContexts.cachedThreadPool
       rawTransactor = H2Transactor.newH2Transactor[F](config.db.url, config.db.username, config.db.username, connectionEC, blocker)
       transactor    <- rawTransactor.evalTap(_.setMaxConnections(config.db.maxConnections.value))
-    } yield AppResources(transactor, blocker, serverEC)
+    } yield AppResources(transactor, serverEC)
 
-  private case class AppResources(transactor: Transactor[F], blocker: Blocker, serverExecutionContext: ExecutionContext)
+  private case class AppResources(transactor: Transactor[F], serverExecutionContext: ExecutionContext)
 }
