@@ -20,7 +20,7 @@ buildInfoKeys := Seq(
 addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
 
 val circeVersion      = "0.13.0"
-val doobieVersion     = "0.8.8"
+val doobieVersion     = "0.9.0"
 val fs2Version        = "2.3.0"
 val http4sVersion     = "0.21.3"
 val pureconfigVersion = "0.12.3"
