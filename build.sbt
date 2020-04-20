@@ -31,7 +31,7 @@ libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-core"   % "2.1.1",
   "org.typelevel" %% "cats-effect" % "2.1.3",
   "org.typelevel" %% "kittens"     % "2.0.0",
-  "org.typelevel" %% "mouse"       % "0.24",
+  "org.typelevel" %% "mouse"       % "0.25",
   // ZIO
   "dev.zio" %% "zio"              % "1.0.0-RC18-2",
   "dev.zio" %% "zio-interop-cats" % "2.0.0.0-RC12",
