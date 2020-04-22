@@ -24,7 +24,7 @@ val doobieVersion     = "0.9.0"
 val fs2Version        = "2.3.0"
 val http4sVersion     = "0.21.3"
 val pureconfigVersion = "0.12.3"
-val refinedVersion    = "0.9.13"
+val refinedVersion    = "0.9.14"
 
 libraryDependencies ++= Seq(
   // Cats / Cats Effect
