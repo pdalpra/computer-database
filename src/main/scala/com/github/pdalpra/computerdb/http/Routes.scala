@@ -61,7 +61,7 @@ object Routes {
           val order = orderOpt.getOrElse(Order.Asc)
 
           for {
-            page <- computerRepository.fetchPaged(page, pageSizeOpt, sort, order, query)
+            page     <- computerRepository.fetchPaged(page, pageSizeOpt, sort, order, query)
             flashData = req.flashData
             context   = ComputersListView.Context(page, query, sort, order)
             response <- Ok(ComputersListView.computersList(context, flashData))
@@ -95,9 +95,9 @@ object Routes {
             } yield response
 
           for {
-            urlForm <- req.as[UrlForm]
+            urlForm    <- req.as[UrlForm]
             decodedForm = urlForm.decode[UnsavedComputer]
-            response <- decodedForm.fold(onFormError(urlForm), onFormSuccess)
+            response   <- decodedForm.fold(onFormError(urlForm), onFormSuccess)
           } yield response
 
         case req @ POST -> Root / ComputerId(id) =>
@@ -112,10 +112,10 @@ object Routes {
             } yield response
 
           (for {
-            computer <- OptionT(computerRepository.fetchOne(id))
-            urlForm  <- OptionT.liftF(req.as[UrlForm])
+            computer   <- OptionT(computerRepository.fetchOne(id))
+            urlForm    <- OptionT.liftF(req.as[UrlForm])
             decodedForm = urlForm.decode[UnsavedComputer]
-            response <- OptionT.liftF(decodedForm.fold(onFormError(computer, urlForm), onFormSuccess(id)))
+            response   <- OptionT.liftF(decodedForm.fold(onFormError(computer, urlForm), onFormSuccess(id)))
           } yield response).getOrElseF(NotFound())
 
         case POST -> Root / ComputerId(id) / "delete" =>
