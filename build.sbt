@@ -10,6 +10,7 @@ inConfig(It)(Defaults.itSettings)
 inConfig(It)(org.scalafmt.sbt.ScalafmtPlugin.scalafmtConfigSettings)
 
 buildInfoPackage := "com.github.pdalpra.computerdb"
+buildInfoObject := "ComputerDatabaseBuildInfo"
 buildInfoOptions += BuildInfoOption.ToJson
 buildInfoKeys := Seq(
   "name"           -> name.value,

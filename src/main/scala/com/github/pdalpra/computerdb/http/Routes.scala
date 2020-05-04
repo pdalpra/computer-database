@@ -1,6 +1,6 @@
 package com.github.pdalpra.computerdb.http
 
-import com.github.pdalpra.computerdb.BuildInfo
+import com.github.pdalpra.computerdb.ComputerDatabaseBuildInfo
 import com.github.pdalpra.computerdb.db._
 import com.github.pdalpra.computerdb.http.FlashCookie._
 import com.github.pdalpra.computerdb.http.forms.ComputerForm._
@@ -51,7 +51,7 @@ object Routes {
     private def miscRoutes =
       HttpRoutes.of[F] {
         case GET -> Root             => redirectToHome
-        case GET -> Root / "version" => Ok(BuildInfo.toJson, `Content-Type`(MediaType.application.json))
+        case GET -> Root / "version" => Ok(ComputerDatabaseBuildInfo.toJson, `Content-Type`(MediaType.application.json))
       }
 
     private def computerReadRoutes =
