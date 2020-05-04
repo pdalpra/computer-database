@@ -83,7 +83,7 @@ class ComputerDatabase[F[_]: ConcurrentEffect: ContextShift: Timer] {
     for {
       serverEC     <- ExecutionContexts.fixedThreadPool(config.server.threadPoolSize.value)
       connectionEC <- ExecutionContexts.cachedThreadPool
-      rawTransactor = H2Transactor.newH2Transactor[F](config.db.url, config.db.username, config.db.username, connectionEC, blocker)
+      rawTransactor = H2Transactor.newH2Transactor[F](config.db.url, config.db.username, config.db.password, connectionEC, blocker)
       transactor   <- rawTransactor.evalTap(_.setMaxConnections(config.db.maxConnections.value))
     } yield AppResources(transactor, serverEC)
 
