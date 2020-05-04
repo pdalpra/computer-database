@@ -39,88 +39,92 @@ object Routes {
 
     def httpApp: HttpApp[F] = FlashCookie(router).orNotFound
 
-    private def router = Router(
-      "/"          -> miscRoutes,
-      "/computers" -> (computerReadRoutes <+> computerWriteRoutes),
-      "/assets"    -> assetsRoutes
-    )
+    private def router =
+      Router(
+        "/"          -> miscRoutes,
+        "/computers" -> (computerReadRoutes <+> computerWriteRoutes),
+        "/assets"    -> assetsRoutes
+      )
 
-    private def miscRoutes = HttpRoutes.of[F] {
-      case GET -> Root             => redirectToHome
-      case GET -> Root / "version" => Ok(BuildInfo.toJson, `Content-Type`(MediaType.application.json))
-    }
+    private def miscRoutes =
+      HttpRoutes.of[F] {
+        case GET -> Root             => redirectToHome
+        case GET -> Root / "version" => Ok(BuildInfo.toJson, `Content-Type`(MediaType.application.json))
+      }
 
-    private def computerReadRoutes = HttpRoutes.of[F] {
-      case req @ GET -> Root :? PageNumber(pageOpt) +& PageSize(pageSizeOpt) +&
+    private def computerReadRoutes =
+      HttpRoutes.of[F] {
+        case req @ GET -> Root :? PageNumber(pageOpt) +& PageSize(pageSizeOpt) +&
             Sort(sortOpt) +& SortOrder(orderOpt) +& SearchQuery(query) =>
-        val page  = pageOpt.getOrElse(Page.DefaultPage)
-        val sort  = sortOpt.getOrElse(ComputerSort.Name)
-        val order = orderOpt.getOrElse(Order.Asc)
+          val page  = pageOpt.getOrElse(Page.DefaultPage)
+          val sort  = sortOpt.getOrElse(ComputerSort.Name)
+          val order = orderOpt.getOrElse(Order.Asc)
 
-        for {
-          page      <- computerRepository.fetchPaged(page, pageSizeOpt, sort, order, query)
-          flashData = req.flashData
-          context   = ComputersListView.Context(page, query, sort, order)
-          response  <- Ok(ComputersListView.computersList(context, flashData))
-        } yield response
-
-      case GET -> Root / "new" =>
-        for {
-          companies <- companyRepository.fetchAll
-          response  <- Ok(Forms.creationForm(companies, None))
-        } yield response
-
-      case GET -> Root / ComputerId(id) =>
-        (for {
-          computer  <- OptionT(computerRepository.fetchOne(id))
-          companies <- OptionT.liftF(companyRepository.fetchAll)
-          response  <- OptionT.liftF(Ok(Forms.editionForm(computer, companies, None)))
-        } yield response).getOrElseF(NotFound())
-    }
-
-    private def computerWriteRoutes = HttpRoutes.of[F] {
-      case req @ POST -> Root =>
-        def onFormSuccess(computer: UnsavedComputer) =
-          computerRepository.insert(computer) *>
-            redirectToHome.withFlashData(s"Computer ${computer.name} has been created")
-
-        def onFormError(form: UrlForm)(errors: NonEmptyChain[FieldError]) =
           for {
-            companies <- companyRepository.fetchAll
-            response  <- BadRequest(Forms.creationForm(companies, InvalidFormState(form, errors).some))
+            page <- computerRepository.fetchPaged(page, pageSizeOpt, sort, order, query)
+            flashData = req.flashData
+            context   = ComputersListView.Context(page, query, sort, order)
+            response <- Ok(ComputersListView.computersList(context, flashData))
           } yield response
 
-        for {
-          urlForm     <- req.as[UrlForm]
-          decodedForm = urlForm.decode[UnsavedComputer]
-          response    <- decodedForm.fold(onFormError(urlForm), onFormSuccess)
-        } yield response
-
-      case req @ POST -> Root / ComputerId(id) =>
-        def onFormSuccess(id: Computer.Id)(computer: UnsavedComputer) =
-          computerRepository.update(id, computer) *>
-            redirectToHome.withFlashData(s"Computer ${computer.name} has been updated")
-
-        def onFormError(computer: Computer, form: UrlForm)(errors: NonEmptyChain[FieldError]) =
+        case GET -> Root / "new" =>
           for {
             companies <- companyRepository.fetchAll
-            response  <- BadRequest(Forms.editionForm(computer, companies, InvalidFormState(form, errors).some))
+            response  <- Ok(Forms.creationForm(companies, None))
           } yield response
 
-        (for {
-          computer    <- OptionT(computerRepository.fetchOne(id))
-          urlForm     <- OptionT.liftF(req.as[UrlForm])
-          decodedForm = urlForm.decode[UnsavedComputer]
-          response    <- OptionT.liftF(decodedForm.fold(onFormError(computer, urlForm), onFormSuccess(id)))
-        } yield response).getOrElseF(NotFound())
+        case GET -> Root / ComputerId(id) =>
+          (for {
+            computer  <- OptionT(computerRepository.fetchOne(id))
+            companies <- OptionT.liftF(companyRepository.fetchAll)
+            response  <- OptionT.liftF(Ok(Forms.editionForm(computer, companies, None)))
+          } yield response).getOrElseF(NotFound())
+      }
 
-      case POST -> Root / ComputerId(id) / "delete" =>
-        (for {
-          computer <- OptionT(computerRepository.fetchOne(id))
-          _        <- OptionT.liftF(computerRepository.deleteOne(id))
-          response <- OptionT.liftF(redirectToHome.withFlashData(s"Computer ${computer.name} has been deleted"))
-        } yield response).getOrElseF(NotFound())
-    }
+    private def computerWriteRoutes =
+      HttpRoutes.of[F] {
+        case req @ POST -> Root =>
+          def onFormSuccess(computer: UnsavedComputer) =
+            computerRepository.insert(computer) *>
+              redirectToHome.withFlashData(s"Computer ${computer.name} has been created")
+
+          def onFormError(form: UrlForm)(errors: NonEmptyChain[FieldError]) =
+            for {
+              companies <- companyRepository.fetchAll
+              response  <- BadRequest(Forms.creationForm(companies, InvalidFormState(form, errors).some))
+            } yield response
+
+          for {
+            urlForm <- req.as[UrlForm]
+            decodedForm = urlForm.decode[UnsavedComputer]
+            response <- decodedForm.fold(onFormError(urlForm), onFormSuccess)
+          } yield response
+
+        case req @ POST -> Root / ComputerId(id) =>
+          def onFormSuccess(id: Computer.Id)(computer: UnsavedComputer) =
+            computerRepository.update(id, computer) *>
+              redirectToHome.withFlashData(s"Computer ${computer.name} has been updated")
+
+          def onFormError(computer: Computer, form: UrlForm)(errors: NonEmptyChain[FieldError]) =
+            for {
+              companies <- companyRepository.fetchAll
+              response  <- BadRequest(Forms.editionForm(computer, companies, InvalidFormState(form, errors).some))
+            } yield response
+
+          (for {
+            computer <- OptionT(computerRepository.fetchOne(id))
+            urlForm  <- OptionT.liftF(req.as[UrlForm])
+            decodedForm = urlForm.decode[UnsavedComputer]
+            response <- OptionT.liftF(decodedForm.fold(onFormError(computer, urlForm), onFormSuccess(id)))
+          } yield response).getOrElseF(NotFound())
+
+        case POST -> Root / ComputerId(id) / "delete" =>
+          (for {
+            computer <- OptionT(computerRepository.fetchOne(id))
+            _        <- OptionT.liftF(computerRepository.deleteOne(id))
+            response <- OptionT.liftF(redirectToHome.withFlashData(s"Computer ${computer.name} has been deleted"))
+          } yield response).getOrElseF(NotFound())
+      }
 
     private def assetsRoutes =
       resourceService(ResourceService.Config("assets", blocker, cacheStrategy = MemoryCache[F]()))

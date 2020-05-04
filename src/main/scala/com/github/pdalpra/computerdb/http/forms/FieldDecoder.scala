@@ -6,10 +6,11 @@ import org.http4s.UrlForm
 trait FieldDecoder[A] { self =>
   def decodeField(urlForm: UrlForm, fieldName: String): FieldResult[A]
 
-  def emap[B](validation: A => FieldResult[B]): FieldDecoder[B] = new FieldDecoder[B] {
-    override def decodeField(urlForm: UrlForm, fieldName: String) =
-      self.decodeField(urlForm, fieldName).andThen(validation)
-  }
+  def emap[B](validation: A => FieldResult[B]): FieldDecoder[B] =
+    new FieldDecoder[B] {
+      override def decodeField(urlForm: UrlForm, fieldName: String) =
+        self.decodeField(urlForm, fieldName).andThen(validation)
+    }
 }
 
 object FieldDecoder {

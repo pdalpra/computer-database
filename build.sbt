@@ -62,8 +62,8 @@ libraryDependencies ++= Seq(
   "eu.timepit"   %% "refined-pureconfig" % refinedVersion,
   "org.tpolecat" %% "doobie-refined"     % doobieVersion,
   // Logging
-  "io.chrisdavenport" %% "log4cats-slf4j" % "1.0.1",
-  "ch.qos.logback"    % "logback-classic" % "1.2.3" % Runtime,
+  "io.chrisdavenport" %% "log4cats-slf4j"  % "1.0.1",
+  "ch.qos.logback"     % "logback-classic" % "1.2.3" % Runtime,
   // Misc
   "com.beachape" %% "enumeratum" % "1.6.0",
   // Testing

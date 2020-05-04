@@ -11,8 +11,8 @@ import org.http4s.dsl.impl.OptionalQueryParamDecoderMatcher
 
 private[http] trait Extractors {
 
-  implicit def refinedDecoder[T: QueryParamDecoder, P, F[_, _]: RefType](
-      implicit validate: Validate[T, P]
+  implicit def refinedDecoder[T: QueryParamDecoder, P, F[_, _]: RefType](implicit
+      validate: Validate[T, P]
   ): QueryParamDecoder[F[T, P]] =
     QueryParamDecoder[T]
       .emap(RefType[F].refine(_).leftMap(ParseFailure("Failed to decode refined type", _)))
