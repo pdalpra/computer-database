@@ -57,7 +57,7 @@ class SqlComputerRepository[F[_]: Sync](transactor: Transactor[F], readOnlyCompu
   override def insert(computer: UnsavedComputer): F[Computer] =
     (for {
       id       <- insertComputer.withUniqueGeneratedKeys[Computer.Id]("id")(computer)
-      computer <- (baseSelect ++ fr"where id = $id").query[Computer].unique
+      computer <- (baseSelect ++ fr"where computer.id = $id").query[Computer].unique
     } yield computer).transact(transactor)
 
   override def deleteOne(id: Computer.Id): F[Unit] =
