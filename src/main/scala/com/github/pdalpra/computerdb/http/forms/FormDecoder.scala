@@ -8,10 +8,11 @@ import shapeless.labelled._
 trait FormDecoder[A] { self =>
   def decodeForm(form: UrlForm): FormResult[A]
 
-  def emap[B](validation: A => FormResult[B]): FormDecoder[B] = new FormDecoder[B] {
-    override def decodeForm(form: UrlForm): FormResult[B] =
-      self.decodeForm(form).andThen(validation)
-  }
+  def emap[B](validation: A => FormResult[B]): FormDecoder[B] =
+    new FormDecoder[B] {
+      override def decodeForm(form: UrlForm): FormResult[B] =
+        self.decodeForm(form).andThen(validation)
+    }
 }
 
 object FormDecoder {
@@ -33,8 +34,8 @@ object DerivedFormDecoder {
       override def decodeForm(form: UrlForm): FormResult[HNil] = HNil.validNec
     }
 
-  implicit def hlistDecoder[FieldName <: Symbol, Head, Tail <: HList](
-      implicit w: Witness.Aux[FieldName],
+  implicit def hlistDecoder[FieldName <: Symbol, Head, Tail <: HList](implicit
+      w: Witness.Aux[FieldName],
       hEncoder: Lazy[FieldDecoder[Head]],
       tEncoder: DerivedFormDecoder[Tail]
   ): DerivedFormDecoder[FieldType[FieldName, Head] :: Tail] =
@@ -45,8 +46,8 @@ object DerivedFormDecoder {
       }
     }
 
-  implicit def genericDecoder[A, H <: HList](
-      implicit gen: LabelledGeneric.Aux[A, H],
+  implicit def genericDecoder[A, H <: HList](implicit
+      gen: LabelledGeneric.Aux[A, H],
       decoder: Lazy[DerivedFormDecoder[H]]
   ): DerivedFormDecoder[A] =
     new DerivedFormDecoder[A] {

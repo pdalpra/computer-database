@@ -11,13 +11,15 @@ import mouse.string._
 trait StringDecoder[A] { self =>
   def decode(s: String): Result[A]
 
-  def map[B](f: A => B): StringDecoder[B] = new StringDecoder[B] {
-    override def decode(s: String) = self.decode(s).map(f)
-  }
+  def map[B](f: A => B): StringDecoder[B] =
+    new StringDecoder[B] {
+      override def decode(s: String) = self.decode(s).map(f)
+    }
 
-  def emap[B](validation: A => Result[B]): StringDecoder[B] = new StringDecoder[B] {
-    override def decode(s: String) = self.decode(s).andThen(validation)
-  }
+  def emap[B](validation: A => Result[B]): StringDecoder[B] =
+    new StringDecoder[B] {
+      override def decode(s: String) = self.decode(s).andThen(validation)
+    }
 }
 
 object StringDecoder {
