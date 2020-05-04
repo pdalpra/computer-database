@@ -68,8 +68,7 @@ class ComputerDatabase[F[_]: ConcurrentEffect: ContextShift: Timer] {
     (Timer[F].sleep(interval) >> action.handleErrorWith(ex => logger.error(s"$errorMessage: $ex"))).foreverM.start.void
 
   private def server(httpApp: HttpApp[F], config: Config.Server, serverExecutionContext: ExecutionContext): F[Unit] =
-    BlazeServerBuilder[F]
-      .withExecutionContext(serverExecutionContext)
+    BlazeServerBuilder[F](serverExecutionContext)
       .withNio2(true)
       .withTcpNoDelay(true)
       .withResponseHeaderTimeout(config.responseHeaderTimeout)
