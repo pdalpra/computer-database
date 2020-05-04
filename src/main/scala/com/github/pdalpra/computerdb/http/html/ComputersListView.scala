@@ -83,7 +83,7 @@ object ComputersListView {
     }
 
     th(`class` := s"col-$columnClass header $orderClass")(
-      a(href := pageLink(Page.Number.unsafeFrom(0), context, newSort, newOrder))(name)
+      a(href := pageLink(Page.DefaultPage, context, newSort, newOrder))(name)
     )
   }
 
