@@ -39,7 +39,7 @@ libraryDependencies ++= Seq(
   "org.http4s" %% "http4s-dsl"          % http4sVersion,
   "org.http4s" %% "http4s-blaze-server" % http4sVersion,
   // Scalatags
-  "com.lihaoyi" %% "scalatags"        % "0.9.0",
+  "com.lihaoyi" %% "scalatags"        % "0.9.1",
   "org.http4s"  %% "http4s-scalatags" % http4sVersion,
   // FS2
   "co.fs2" %% "fs2-core" % fs2Version,
