@@ -26,13 +26,15 @@ object Routes {
   def apply[F[_]: Sync: ContextShift](
       computerRepository: ComputerRepository[F],
       companyRepository: CompanyRepository[F],
+      initialComputers: List[UnsavedComputer],
       blocker: Blocker
   ): HttpApp[F] =
-    new Routes[F](computerRepository, companyRepository, blocker).httpApp
+    new Routes[F](computerRepository, companyRepository, initialComputers, blocker).httpApp
 
   private class Routes[F[_]: Sync: ContextShift](
       computerRepository: ComputerRepository[F],
       companyRepository: CompanyRepository[F],
+      initialComputers: List[UnsavedComputer],
       blocker: Blocker
   ) extends Http4sDsl[F]
       with Extractors {
@@ -124,6 +126,12 @@ object Routes {
             _        <- OptionT.liftF(computerRepository.deleteOne(id))
             response <- OptionT.liftF(redirectToHome.withFlashData(s"Computer ${computer.name} has been deleted"))
           } yield response).getOrElseF(NotFound())
+
+        case GET -> Root / "reset" =>
+          for {
+            _        <- computerRepository.loadAll(initialComputers)
+            response <- redirectToHome.withFlashData("Computer data reset to reference data.")
+          } yield response
       }
 
     private def assetsRoutes =
