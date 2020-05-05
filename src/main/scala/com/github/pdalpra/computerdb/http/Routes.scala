@@ -7,6 +7,7 @@ import com.github.pdalpra.computerdb.http.forms.ComputerForm._
 import com.github.pdalpra.computerdb.http.forms.FieldError
 import com.github.pdalpra.computerdb.http.forms.syntax._
 import com.github.pdalpra.computerdb.http.html.Forms.InvalidFormState
+import com.github.pdalpra.computerdb.http.ScalatagsInstances._
 import com.github.pdalpra.computerdb.http.html._
 import com.github.pdalpra.computerdb.model._
 
@@ -17,7 +18,6 @@ import org.http4s._
 import org.http4s.dsl.Http4sDsl
 import org.http4s.headers.{ `Content-Type`, Location }
 import org.http4s.implicits._
-import org.http4s.scalatags._
 import org.http4s.server.Router
 import org.http4s.server.staticcontent._
 
