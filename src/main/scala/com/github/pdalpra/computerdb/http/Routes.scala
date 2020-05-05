@@ -57,10 +57,11 @@ object Routes {
     private def computerReadRoutes =
       HttpRoutes.of[F] {
         case req @ GET -> Root :? PageNumber(pageOpt) +& PageSize(pageSizeOpt) +&
-            Sort(sortOpt) +& SortOrder(orderOpt) +& SearchQuery(query) =>
+            Sort(sortOpt) +& SortOrder(orderOpt) +& SearchQuery(rawQuery) =>
           val page  = pageOpt.getOrElse(Page.DefaultPage)
           val sort  = sortOpt.getOrElse(ComputerSort.Name)
           val order = orderOpt.getOrElse(Order.Asc)
+          val query = rawQuery.flatten
 
           for {
             page     <- computerRepository.fetchPaged(page, pageSizeOpt, sort, order, query)
