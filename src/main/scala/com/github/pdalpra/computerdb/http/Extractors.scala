@@ -33,11 +33,14 @@ private[http] trait Extractors {
           .fold(err => ParseResult.fail("order", err.getMessage()), ParseResult.success)
       )
 
+  private val searchQueryDecoder: QueryParamDecoder[Option[NonEmptyString]] =
+    QueryParamDecoder[String].map(NonEmptyString.from(_).toOption)
+
   object PageNumber  extends OptionalQueryParamDecoderMatcher[Page.Number]("p")
   object PageSize    extends OptionalQueryParamDecoderMatcher[Page.Size]("n")
   object Sort        extends OptionalQueryParamDecoderMatcher[ComputerSort]("s")
   object SortOrder   extends OptionalQueryParamDecoderMatcher[Order]("d")
-  object SearchQuery extends OptionalQueryParamDecoderMatcher[NonEmptyString]("f")
+  object SearchQuery extends OptionalQueryParamDecoderMatcher[Option[NonEmptyString]]("f")(searchQueryDecoder)
 
   object ComputerId {
     def unapply(str: String): Option[Computer.Id] =
