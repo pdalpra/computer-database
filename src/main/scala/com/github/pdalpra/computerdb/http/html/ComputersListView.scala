@@ -1,5 +1,7 @@
 package com.github.pdalpra.computerdb.http.html
 
+import java.time.format.DateTimeFormatter
+
 import com.github.pdalpra.computerdb.db.{ ComputerSort, Order }
 import com.github.pdalpra.computerdb.model._
 
@@ -8,6 +10,8 @@ import scalatags.Text._
 import scalatags.Text.all._
 
 object ComputersListView {
+  private val dateFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
+
   final case class Context(page: Page[Computer], searchQuery: Option[NonEmptyString], sort: ComputerSort, order: Order)
 
   def computersList(context: Context, flashData: Option[String]): TypedTag[String] =
@@ -35,8 +39,8 @@ object ComputersListView {
   private def title(computers: Page[Computer]) =
     computers.total match {
       case 0 => "No computer"
-      case 1 => "One computer"
-      case n => s"$n computers"
+      case 1 => "One computer found"
+      case n => s"$n computers found"
     }
 
   private def computerTable(context: Context) =
@@ -53,8 +57,8 @@ object ComputersListView {
         tbody(context.page.items.map { computer =>
           tr(
             td(a(href := s"/computers/${computer.id.value}")(computer.name.value)),
-            td(computer.introduced.fold("-")(_.toString)),
-            td(computer.discontinued.fold("-")(_.toString)),
+            td(computer.introduced.fold("-")(dateFormatter.format)),
+            td(computer.discontinued.fold("-")(dateFormatter.format)),
             td(computer.company.fold("-")(_.name.value))
           )
         })

@@ -36,12 +36,10 @@ libraryDependencies ++= Seq(
   // ZIO
   "dev.zio" %% "zio"              % "1.0.0-RC18-2",
   "dev.zio" %% "zio-interop-cats" % "2.0.0.0-RC13",
-  // Http4s
-  "org.http4s" %% "http4s-dsl"          % http4sVersion,
-  "org.http4s" %% "http4s-blaze-server" % http4sVersion,
-  // Scalatags
-  "com.lihaoyi" %% "scalatags"        % "0.9.1",
-  "org.http4s"  %% "http4s-scalatags" % http4sVersion,
+  // Http4s / Scalatags
+  "org.http4s"  %% "http4s-dsl"          % http4sVersion,
+  "org.http4s"  %% "http4s-blaze-server" % http4sVersion,
+  "com.lihaoyi" %% "scalatags"           % "0.9.1",
   // FS2
   "co.fs2" %% "fs2-core" % fs2Version,
   "co.fs2" %% "fs2-io"   % fs2Version,

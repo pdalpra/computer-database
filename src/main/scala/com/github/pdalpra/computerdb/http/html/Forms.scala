@@ -56,9 +56,9 @@ object Forms {
 
     form(action := targetUrl, method := "POST")(
       fieldset(
-        inputField("name", "Computer name", name, context.invalidFormState),
-        inputField("introduced", "Introduced", introduced, context.invalidFormState),
-        inputField("discontinued", "Discontinued", discontinued, context.invalidFormState),
+        inputField("name", "Computer name", "Required", name, context.invalidFormState),
+        inputField("introduced", "Introduced", "Date ('yyyy-MM-dd')", introduced, context.invalidFormState),
+        inputField("discontinued", "Discontinued", "Date ('yyyy-MM-dd')", discontinued, context.invalidFormState),
         companiesSelect(context.companies, context.companyId)
       ),
       div(`class` := "actions")(
@@ -74,7 +74,7 @@ object Forms {
       input(`type` := "submit", value := "Delete this computer", `class` := "btn danger")
     )
 
-  private def inputField(fieldName: String, fieldLabel: String, defaultValue: String, formState: Option[InvalidFormState]) = {
+  private def inputField(fieldName: String, fieldLabel: String, hint: String, defaultValue: String, formState: Option[InvalidFormState]) = {
     val enteredValue = formState.flatMap(_.form.getFirst(fieldName))
     val fieldError   = formState.flatMap(_.errors.find(_.fieldName === fieldName))
     val errorClass   = if (fieldError.isDefined) "error" else ""
@@ -83,7 +83,7 @@ object Forms {
       div(`class` := "input")(
         input(`type` := "text", id := fieldName, name := fieldName, value := enteredValue.getOrElse(defaultValue)),
         " ",
-        span(`class` := "help-inline")(fieldError.fold("aaaaa")(_.error.getMessage))
+        span(`class` := "help-inline")(fieldError.fold(hint)(_.error.getMessage))
       )
     )
   }
