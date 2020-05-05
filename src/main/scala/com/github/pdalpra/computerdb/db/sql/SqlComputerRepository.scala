@@ -29,10 +29,11 @@ class SqlComputerRepository[F[_]: Sync](transactor: Transactor[F], readOnlyCompu
     val limit  = pageSize.getOrElse(SqlComputerRepository.DefaultPageSize)
     val offset = (page.value - 1) * limit.value
 
-    val filterFragment = Fragments.whereAndOpt(nameFilter.map(name => fr"lower(computer.name) like ${s"%$name%"}"))
-    val sortFragment   = fr"order by " ++ Fragment.const(sort.column) ++ Fragment.const(order.entryName)
-    val pageQuery      = baseSelect ++ filterFragment ++ sortFragment ++ fr"nulls last limit $limit offset $offset"
-    val rowsCountQuery = fr" select count(1) from computer left join company on computer.company_id = company.id" ++ filterFragment
+    val normalizedFilter = nameFilter.map(_.value.toLowerCase)
+    val filterFragment   = Fragments.whereAndOpt(normalizedFilter.map(name => fr"lower(computer.name) like ${s"%$name%"}"))
+    val sortFragment     = fr"order by " ++ Fragment.const(sort.column) ++ Fragment.const(order.entryName)
+    val pageQuery        = baseSelect ++ filterFragment ++ sortFragment ++ fr"nulls last limit $limit offset $offset"
+    val rowsCountQuery   = fr" select count(1) from computer left join company on computer.company_id = company.id" ++ filterFragment
 
     (for {
       list      <- pageQuery.query[Computer].to[List]
