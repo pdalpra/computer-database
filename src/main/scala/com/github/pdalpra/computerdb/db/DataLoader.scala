@@ -28,7 +28,6 @@ object DataLoader {
     private val logger = Slf4jLogger.getLogger[F]
 
     implicit val companyIdDecoder: Decoder[Company.Id]     = Decoder[UniqueId].map(Company.Id.apply)
-    implicit val computerIdDecoder: Decoder[Computer.Id]   = Decoder[UniqueId].map(Computer.Id.apply)
     implicit val computerDecoder: Decoder[UnsavedComputer] = deriveDecoder
 
     override def loadInitialData: F[InitialData] =
