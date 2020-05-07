@@ -12,7 +12,7 @@ import scalatags.Text.all._
 object ComputersListView {
   private val dateFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
 
-  final case class Context(page: Page[Computer], searchQuery: Option[NonEmptyString], sort: ComputerSort, order: Order)
+  final case class Context(page: Page[Computer], pageSize: Page.Size, searchQuery: Option[NonEmptyString], sort: ComputerSort, order: Order)
 
   def computersList(context: Context, flashData: Option[String]): TypedTag[String] =
     PageTemplate.pageTemplate(
@@ -94,7 +94,7 @@ object ComputersListView {
   private def pageLink(targetPage: Page.Number, context: Context, newSort: Option[ComputerSort], newOrder: Option[Order]) = {
     val sort    = newSort.getOrElse(context.sort)
     val order   = newOrder.getOrElse(context.order)
-    val baseUrl = s"/computers?p=$targetPage&n=${context.page.items.size}&s=${sort.value}&d=${order.entryName}"
+    val baseUrl = s"/computers?p=$targetPage&n=${context.page}&s=${sort.value}&d=${order.entryName}"
     context.searchQuery.map(filter => baseUrl + s"&f=$filter").getOrElse(baseUrl)
   }
 

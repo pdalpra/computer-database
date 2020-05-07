@@ -10,7 +10,8 @@ object Page {
   object Number extends RefinedTypeOps[Number, Int]
   object Size   extends RefinedTypeOps[Size, Int]
 
-  val DefaultPage: Number = Number.unsafeFrom(1)
+  val DefaultPage: Number   = Number.unsafeFrom(1)
+  val DefaultPageSize: Size = Page.Size.unsafeFrom(10)
 }
 final case class Page[A](items: List[A], page: Page.Number, offset: Int, total: Int) {
 
