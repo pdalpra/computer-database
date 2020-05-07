@@ -11,9 +11,6 @@ import doobie.implicits._
 import doobie.implicits.javatime._
 import doobie.refined.implicits._
 
-object SqlComputerRepository {
-  private val DefaultPageSize: Page.Size = Page.Size.unsafeFrom(10)
-}
 class SqlComputerRepository[F[_]: Sync](transactor: Transactor[F], readOnlyComputers: List[Computer.Id]) extends ComputerRepository[F] {
 
   override def fetchOne(id: Computer.Id): F[Option[Computer]] =
@@ -21,18 +18,17 @@ class SqlComputerRepository[F[_]: Sync](transactor: Transactor[F], readOnlyCompu
 
   def fetchPaged(
       page: Page.Number,
-      pageSize: Option[Page.Size],
+      pageSize: Page.Size,
       sort: ComputerSort,
       order: Order,
       nameFilter: Option[NonEmptyString]
   ): F[Page[Computer]] = {
-    val limit  = pageSize.getOrElse(SqlComputerRepository.DefaultPageSize)
-    val offset = (page.value - 1) * limit.value
+    val offset = (page.value - 1) * pageSize.value
 
     val normalizedFilter = nameFilter.map(_.value.toLowerCase)
     val filterFragment   = Fragments.whereAndOpt(normalizedFilter.map(name => fr"lower(computer.name) like ${s"%$name%"}"))
     val sortFragment     = fr"order by " ++ Fragment.const(sort.column) ++ Fragment.const(order.entryName)
-    val pageQuery        = baseSelect ++ filterFragment ++ sortFragment ++ fr"nulls last limit $limit offset $offset"
+    val pageQuery        = baseSelect ++ filterFragment ++ sortFragment ++ fr"nulls last limit $pageSize offset $offset"
     val rowsCountQuery   = fr" select count(1) from computer left join company on computer.company_id = company.id" ++ filterFragment
 
     (for {

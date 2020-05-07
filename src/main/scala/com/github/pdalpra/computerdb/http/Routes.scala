@@ -58,15 +58,16 @@ object Routes {
       HttpRoutes.of[F] {
         case req @ GET -> Root :? PageNumber(pageOpt) +& PageSize(pageSizeOpt) +&
             Sort(sortOpt) +& SortOrder(orderOpt) +& SearchQuery(rawQuery) =>
-          val page  = pageOpt.getOrElse(Page.DefaultPage)
-          val sort  = sortOpt.getOrElse(ComputerSort.Name)
-          val order = orderOpt.getOrElse(Order.Asc)
-          val query = rawQuery.flatten
+          val page     = pageOpt.getOrElse(Page.DefaultPage)
+          val pageSize = pageSizeOpt.getOrElse(Page.DefaultPageSize)
+          val sort     = sortOpt.getOrElse(ComputerSort.Name)
+          val order    = orderOpt.getOrElse(Order.Asc)
+          val query    = rawQuery.flatten
 
           for {
-            page     <- computerRepository.fetchPaged(page, pageSizeOpt, sort, order, query)
+            page     <- computerRepository.fetchPaged(page, pageSize, sort, order, query)
             flashData = req.flashData
-            context   = ComputersListView.Context(page, query, sort, order)
+            context   = ComputersListView.Context(page, pageSize, query, sort, order)
             response <- Ok(ComputersListView.computersList(context, flashData))
           } yield response
 

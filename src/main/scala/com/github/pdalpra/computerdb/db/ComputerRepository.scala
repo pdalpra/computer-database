@@ -6,7 +6,7 @@ trait ComputerRepository[F[_]] {
   def fetchOne(id: Computer.Id): F[Option[Computer]]
   def fetchPaged(
       page: Page.Number,
-      pageSize: Option[Page.Size],
+      pageSize: Page.Size,
       sort: ComputerSort,
       order: Order,
       nameFilter: Option[NonEmptyString]
