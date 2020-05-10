@@ -4,6 +4,7 @@ import java.time.format.DateTimeFormatter
 
 import com.github.pdalpra.computerdb.db.ComputerSort
 import com.github.pdalpra.computerdb.model._
+import com.github.pdalpra.computerdb.service.ComputerListParameters
 
 import cats.implicits._
 import scalatags.Text._
@@ -12,13 +13,13 @@ import scalatags.Text.all._
 object ComputersListView {
   private val dateFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
 
-  final case class Context(page: Page[Computer], pageSize: Page.Size, searchQuery: Option[NonEmptyString], sort: ComputerSort, order: Order)
+  final case class Context(page: Page[Computer], parameters: ComputerListParameters)
 
   def computersList(context: Context, flashData: Option[String]): TypedTag[String] =
     PageTemplate.pageTemplate(
       h1(title(context.page)),
       flashData.map(div(`class` := "alert-message warning")(strong("Done !  "), _)),
-      computerActions(context.searchQuery),
+      computerActions(context.parameters.nameFilter),
       computerTable(context),
       pageNavigation(context)
     )
@@ -81,8 +82,8 @@ object ComputersListView {
       .getOrElse(li(`class` := s"$cssClass disabled")(a(message)))
 
   private def header(name: String, columnClass: String, context: Context, sort: ComputerSort) = {
-    val (newSort, newOrder, orderClass) = context.sort match {
-      case `sort` => (None, context.order.inverse.some, orderCssClass(context.order))
+    val (newSort, newOrder, orderClass) = context.parameters.sort match {
+      case `sort` => (None, context.parameters.order.inverse.some, orderCssClass(context.parameters.order))
       case _      => (sort.some, None, "")
     }
 
@@ -92,10 +93,10 @@ object ComputersListView {
   }
 
   private def pageLink(targetPage: Page.Number, context: Context, newSort: Option[ComputerSort], newOrder: Option[Order]) = {
-    val sort    = newSort.getOrElse(context.sort)
-    val order   = newOrder.getOrElse(context.order)
-    val baseUrl = s"/computers?p=$targetPage&n=${context.pageSize}&s=${sort.value}&d=${order.entryName}"
-    context.searchQuery.map(filter => baseUrl + s"&f=$filter").getOrElse(baseUrl)
+    val sort    = newSort.getOrElse(context.parameters.sort)
+    val order   = newOrder.getOrElse(context.parameters.order)
+    val baseUrl = s"/computers?p=$targetPage&n=${context.parameters.size}&s=${sort.value}&d=${order.entryName}"
+    context.parameters.nameFilter.map(filter => baseUrl + s"&f=$filter").getOrElse(baseUrl)
   }
 
   private def orderCssClass(order: Order) =
