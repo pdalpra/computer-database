@@ -1,6 +1,6 @@
 package com.github.pdalpra.computerdb.http
 
-import com.github.pdalpra.computerdb.db.{ ComputerSort, Order }
+import com.github.pdalpra.computerdb.db.ComputerSort
 import com.github.pdalpra.computerdb.model._
 
 import cats.implicits._

@@ -6,7 +6,7 @@ import scala.concurrent.duration.FiniteDuration
 import com.github.pdalpra.computerdb.db._
 import com.github.pdalpra.computerdb.db.sql._
 import com.github.pdalpra.computerdb.http.Routes
-import com.github.pdalpra.computerdb.model.UnsavedComputer
+import com.github.pdalpra.computerdb.service.ComputerService
 
 import cats.effect._
 import cats.effect.implicits._
@@ -41,26 +41,23 @@ class ComputerDatabase[F[_]: ConcurrentEffect: ContextShift: Timer] {
     val computerRepository = new SqlComputerRepository[F](appResources.transactor, config.db.readOnlyComputers)
 
     for {
-      _           <- initSchema.initSchema
-      initialData <- dataLoader.loadInitialData
-      routes       = Routes[F](computerRepository, companyRepository, initialData.computers, blocker)
-      _           <- companyRepository.loadAll(initialData.companies)
-      _           <- computerRepository.loadAll(initialData.computers)
-      _           <- logger.info("Loaded all reference data into the database.")
-      _           <- scheduleDataReset(computerRepository, initialData.computers, config.db.restoreInitial)
-      server      <- server(routes, config.server, appResources.serverExecutionContext).start
-      _           <- logger.info(s"Computer database started on port ${config.server.port}")
-      _           <- server.join
+      _              <- initSchema.initSchema
+      initialData    <- dataLoader.loadInitialData
+      computerService = ComputerService(computerRepository, companyRepository, initialData.computers)
+      routes          = Routes[F](computerService, blocker)
+      _              <- companyRepository.loadAll(initialData.companies)
+      _              <- computerRepository.loadAll(initialData.computers)
+      _              <- logger.info("Loaded all reference data into the database.")
+      _              <- scheduleDataReset(computerService, config.db.restoreInitial)
+      server         <- server(routes, config.server, appResources.serverExecutionContext).start
+      _              <- logger.info(s"Computer database started on port ${config.server.port}")
+      _              <- server.join
     } yield ()
   }
 
-  private def scheduleDataReset(
-      computerRepository: ComputerRepository[F],
-      defaultComputers: List[UnsavedComputer],
-      config: Config.Database.RestoreInitial
-  ): F[Unit] =
+  private def scheduleDataReset(computerService: ComputerService[F], config: Config.Database.RestoreInitial): F[Unit] =
     Sync[F].whenA(config.enabled) {
-      val resetData = computerRepository.loadAll(defaultComputers) *> logger.info("Computer data reset to reference data.")
+      val resetData = computerService.loadDefaultComputers *> logger.info("Computer data reset to reference data.")
       schedule(resetData, config.frequency, "Failed to reset computer data")
     }
 

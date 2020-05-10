@@ -1,7 +1,6 @@
 package com.github.pdalpra.computerdb.http
 
 import com.github.pdalpra.computerdb.ComputerDatabaseBuildInfo
-import com.github.pdalpra.computerdb.db._
 import com.github.pdalpra.computerdb.http.FlashCookie._
 import com.github.pdalpra.computerdb.http.forms.ComputerForm._
 import com.github.pdalpra.computerdb.http.forms.FieldError
@@ -10,6 +9,7 @@ import com.github.pdalpra.computerdb.http.html.Forms.InvalidFormState
 import com.github.pdalpra.computerdb.http.ScalatagsInstances._
 import com.github.pdalpra.computerdb.http.html._
 import com.github.pdalpra.computerdb.model._
+import com.github.pdalpra.computerdb.service._
 
 import cats.data.{ NonEmptyChain, OptionT }
 import cats.effect.{ Blocker, ContextShift, Sync }
@@ -23,20 +23,11 @@ import org.http4s.server.staticcontent._
 
 object Routes {
 
-  def apply[F[_]: Sync: ContextShift](
-      computerRepository: ComputerRepository[F],
-      companyRepository: CompanyRepository[F],
-      initialComputers: List[UnsavedComputer],
-      blocker: Blocker
-  ): HttpApp[F] =
-    new Routes[F](computerRepository, companyRepository, initialComputers, blocker).httpApp
+  def apply[F[_]: Sync: ContextShift](computerService: ComputerService[F], blocker: Blocker): HttpApp[F] =
+    new Routes[F](computerService, blocker).httpApp
 
-  private class Routes[F[_]: Sync: ContextShift](
-      computerRepository: ComputerRepository[F],
-      companyRepository: CompanyRepository[F],
-      initialComputers: List[UnsavedComputer],
-      blocker: Blocker
-  ) extends Http4sDsl[F]
+  private class Routes[F[_]: Sync: ContextShift](computerService: ComputerService[F], blocker: Blocker)
+      extends Http4sDsl[F]
       with Extractors {
 
     def httpApp: HttpApp[F] = FlashCookie(router).orNotFound
@@ -56,31 +47,27 @@ object Routes {
 
     private def computerReadRoutes =
       HttpRoutes.of[F] {
-        case req @ GET -> Root :? PageNumber(pageOpt) +& PageSize(pageSizeOpt) +&
-            Sort(sortOpt) +& SortOrder(orderOpt) +& SearchQuery(rawQuery) =>
-          val page     = pageOpt.getOrElse(Page.DefaultPage)
-          val pageSize = pageSizeOpt.getOrElse(Page.DefaultPageSize)
-          val sort     = sortOpt.getOrElse(ComputerSort.Name)
-          val order    = orderOpt.getOrElse(Order.Asc)
-          val query    = rawQuery.flatten
+        case req @ GET -> Root :? PageNumber(page) +& PageSize(pageSize) +& Sort(sort) +& SortOrder(order) +& SearchQuery(rawQuery) =>
+          val query      = rawQuery.flatten
+          val parameters = ComputerListParameters(page, pageSize, sort, order, query)
 
           for {
-            page     <- computerRepository.fetchPaged(page, pageSize, sort, order, query)
+            page     <- computerService.fetchComputers(parameters)
             flashData = req.flashData
-            context   = ComputersListView.Context(page, pageSize, query, sort, order)
+            context   = ComputersListView.Context(page, parameters)
             response <- Ok(ComputersListView.computersList(context, flashData))
           } yield response
 
         case GET -> Root / "new" =>
           for {
-            companies <- companyRepository.fetchAll
+            companies <- computerService.fetchCompanies
             response  <- Ok(Forms.creationForm(companies, None))
           } yield response
 
         case GET -> Root / ComputerId(id) =>
           (for {
-            computer  <- OptionT(computerRepository.fetchOne(id))
-            companies <- OptionT.liftF(companyRepository.fetchAll)
+            computer  <- OptionT(computerService.fetchComputer(id))
+            companies <- OptionT.liftF(computerService.fetchCompanies)
             response  <- OptionT.liftF(Ok(Forms.editionForm(computer, companies, None)))
           } yield response).getOrElseF(NotFound())
       }
@@ -89,12 +76,12 @@ object Routes {
       HttpRoutes.of[F] {
         case req @ POST -> Root =>
           def onFormSuccess(computer: UnsavedComputer) =
-            computerRepository.insert(computer) *>
+            computerService.insertComputer(computer) *>
               redirectToHome.withFlashData(s"Computer ${computer.name} has been created")
 
           def onFormError(form: UrlForm)(errors: NonEmptyChain[FieldError]) =
             for {
-              companies <- companyRepository.fetchAll
+              companies <- computerService.fetchCompanies
               response  <- BadRequest(Forms.creationForm(companies, InvalidFormState(form, errors).some))
             } yield response
 
@@ -106,17 +93,17 @@ object Routes {
 
         case req @ POST -> Root / ComputerId(id) =>
           def onFormSuccess(id: Computer.Id)(computer: UnsavedComputer) =
-            computerRepository.update(id, computer) *>
+            computerService.updateComputer(id, computer) *>
               redirectToHome.withFlashData(s"Computer ${computer.name} has been updated")
 
           def onFormError(computer: Computer, form: UrlForm)(errors: NonEmptyChain[FieldError]) =
             for {
-              companies <- companyRepository.fetchAll
+              companies <- computerService.fetchCompanies
               response  <- BadRequest(Forms.editionForm(computer, companies, InvalidFormState(form, errors).some))
             } yield response
 
           (for {
-            computer   <- OptionT(computerRepository.fetchOne(id))
+            computer   <- OptionT(computerService.fetchComputer(id))
             urlForm    <- OptionT.liftF(req.as[UrlForm])
             decodedForm = urlForm.decode[UnsavedComputer]
             response   <- OptionT.liftF(decodedForm.fold(onFormError(computer, urlForm), onFormSuccess(id)))
@@ -124,14 +111,13 @@ object Routes {
 
         case POST -> Root / ComputerId(id) / "delete" =>
           (for {
-            computer <- OptionT(computerRepository.fetchOne(id))
-            _        <- OptionT.liftF(computerRepository.deleteOne(id))
+            computer <- OptionT(computerService.deleteComputer(id))
             response <- OptionT.liftF(redirectToHome.withFlashData(s"Computer ${computer.name} has been deleted"))
           } yield response).getOrElseF(NotFound())
 
         case GET -> Root / "reset" =>
           for {
-            _        <- computerRepository.loadAll(initialComputers)
+            _        <- computerService.loadDefaultComputers
             response <- redirectToHome.withFlashData("Computer data reset to reference data.")
           } yield response
       }
