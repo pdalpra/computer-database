@@ -12,8 +12,8 @@ object ComputerSort extends StringEnum[ComputerSort] {
 
   override def values: immutable.IndexedSeq[ComputerSort] = findValues
 
-  case object Name         extends ComputerSort("name", "computer.name")
+  case object Name         extends ComputerSort("name", "lower(computer.name)")
   case object Introduced   extends ComputerSort("introduced", "computer.introduced")
   case object Discontinued extends ComputerSort("discontinued", "computer.discontinued")
-  case object CompanyName  extends ComputerSort("companyName", "company.name")
+  case object CompanyName  extends ComputerSort("companyName", "lower(company.name)")
 }
