@@ -35,7 +35,7 @@ object Config {
       maxConnections: PosInt,
       username: String,
       password: String,
-      readOnlyComputers: List[Computer.Id],
+      readOnlyComputers: Set[Computer.Id],
       restoreInitial: Database.RestoreInitial
   )
 }

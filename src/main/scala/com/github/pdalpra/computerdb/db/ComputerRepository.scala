@@ -28,7 +28,7 @@ trait ComputerRepository[F[_]] {
 
 object ComputerRepository {
 
-  def apply[F[_]: Sync](transactor: Transactor[F], readOnlyComputers: List[Computer.Id]): ComputerRepository[F] =
+  def apply[F[_]: Sync](transactor: Transactor[F]): ComputerRepository[F] =
     new ComputerRepository[F] {
       override def fetchOne(id: Computer.Id): F[Option[Computer]] =
         (baseSelect ++ fr"where computer.id = $id").query[Computer].option.transact(transactor)
@@ -55,18 +55,13 @@ object ComputerRepository {
       }
 
       override def update(id: Computer.Id, computer: UnsavedComputer): F[Unit] =
-        Sync[F].whenA(!readOnlyComputers.contains(id)) {
-          val updateQuery =
-            sql"""update computer
+        sql"""update computer
               set name = ${computer.name},
               introduced = ${computer.introduced},
               discontinued = ${computer.discontinued},
               company_id = ${computer.company}
               where id = $id
-           """
-
-          updateQuery.update.run.transact(transactor)
-        }
+           """.update.run.transact(transactor).void
 
       override def insert(computer: UnsavedComputer): F[Computer] =
         (for {
@@ -75,9 +70,7 @@ object ComputerRepository {
         } yield computer).transact(transactor)
 
       override def deleteOne(id: Computer.Id): F[Unit] =
-        Sync[F].whenA(!readOnlyComputers.contains(id)) {
-          sql"delete from computer where id = $id".update.run.transact(transactor)
-        }
+        sql"delete from computer where id = $id".update.run.transact(transactor).void
 
       override def loadAll(computers: List[UnsavedComputer]): F[Unit] =
         (for {
