@@ -21,27 +21,25 @@ object DataLoader {
   private val chunkSize = 8192
 
   def apply[F[_]: Sync: ContextShift](blocker: Blocker): DataLoader[F] =
-    new DefaultDataLoader[F](blocker)
+    new DataLoader[F] {
+      private val logger = Slf4jLogger.getLogger[F]
 
-  private class DefaultDataLoader[F[_]: Sync: ContextShift](blocker: Blocker) extends DataLoader[F] {
-    private val logger = Slf4jLogger.getLogger[F]
+      override def loadInitialData: F[InitialData] =
+        for {
+          companies <- readJsonFromClasspathResource[NonEmptyString]("data/companies.json")
+          computers <- readJsonFromClasspathResource[UnsavedComputer]("data/computers.json")
+          _         <- logger.info(s"Loaded ${companies.size} companies from reference data.")
+          _         <- logger.info(s"Loaded ${computers.size} computers from reference data.")
+        } yield InitialData(companies, computers)
 
-    override def loadInitialData: F[InitialData] =
-      for {
-        companies <- readJsonFromClasspathResource[NonEmptyString]("data/companies.json")
-        computers <- readJsonFromClasspathResource[UnsavedComputer]("data/computers.json")
-        _         <- logger.info(s"Loaded ${companies.size} companies from reference data.")
-        _         <- logger.info(s"Loaded ${computers.size} computers from reference data.")
-      } yield InitialData(companies, computers)
+      private def readJsonFromClasspathResource[T: Decoder](resourceName: String): F[List[T]] = {
+        val inputStream = Sync[F].delay(getClass.getClassLoader.getResourceAsStream(resourceName))
 
-    private def readJsonFromClasspathResource[T: Decoder](resourceName: String): F[List[T]] = {
-      val inputStream = Sync[F].delay(getClass.getClassLoader.getResourceAsStream(resourceName))
-
-      unsafeReadInputStream(inputStream, chunkSize, blocker)
-        .through(byteArrayParser)
-        .through(decoder[F, T])
-        .compile
-        .toList
+        unsafeReadInputStream(inputStream, chunkSize, blocker)
+          .through(byteArrayParser)
+          .through(decoder[F, T])
+          .compile
+          .toList
+      }
     }
-  }
 }

@@ -4,7 +4,6 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.FiniteDuration
 
 import com.github.pdalpra.computerdb.db._
-import com.github.pdalpra.computerdb.db.sql._
 import com.github.pdalpra.computerdb.http.Routes
 import com.github.pdalpra.computerdb.service.ComputerService
 
@@ -37,8 +36,8 @@ class ComputerDatabase[F[_]: ConcurrentEffect: ContextShift: Timer] {
   private def setup(appResources: AppResources, blocker: Blocker, config: Config): F[Unit] = {
     val initSchema         = SchemaInitializer[F](appResources.transactor)
     val dataLoader         = DataLoader[F](blocker)
-    val companyRepository  = new SqlCompanyRepository[F](appResources.transactor)
-    val computerRepository = new SqlComputerRepository[F](appResources.transactor, config.db.readOnlyComputers)
+    val companyRepository  = CompanyRepository[F](appResources.transactor)
+    val computerRepository = ComputerRepository[F](appResources.transactor, config.db.readOnlyComputers)
 
     for {
       _              <- initSchema.initSchema

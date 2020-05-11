@@ -1,15 +1,14 @@
-package com.github.pdalpra.computerdb.db.sql
+package com.github.pdalpra.computerdb.db
 
 import java.time.LocalDate
 
-import com.github.pdalpra.computerdb.db.ComputerSort
 import com.github.pdalpra.computerdb.model._
 
 import doobie._
 import doobie.implicits.javatime._
 import doobie.refined.implicits._
 
-private[sql] object DoobieInstances {
+private[db] object DoobieInstances {
 
   implicit val computerSortPut: Put[ComputerSort] = Put[String].contramap(_.column)
 
