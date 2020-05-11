@@ -23,6 +23,7 @@ object ComputerService {
   def apply[F[_]: Sync](
       computerRepository: ComputerRepository[F],
       companyRepository: CompanyRepository[F],
+      readOnlyComputers: Set[Computer.Id],
       initialComputers: List[UnsavedComputer]
   ): ComputerService[F] =
     new ComputerService[F] {
@@ -39,14 +40,15 @@ object ComputerService {
         computerRepository.insert(computer)
 
       override def updateComputer(id: Computer.Id, computer: UnsavedComputer): F[Unit] =
-        computerRepository.update(id, computer)
+        Sync[F].whenA(!readOnlyComputers.contains(id)) {
+          computerRepository.update(id, computer)
+        }
 
-      override def deleteComputer(id: Computer.Id): F[Option[Computer]] = {
+      override def deleteComputer(id: Computer.Id): F[Option[Computer]] =
         (for {
           computer <- OptionT(computerRepository.fetchOne(id))
-          _        <- OptionT.liftF(computerRepository.deleteOne(id))
+          _        <- OptionT.liftF(Sync[F].whenA(!readOnlyComputers.contains(id))(computerRepository.deleteOne(id)))
         } yield computer).value
-      }
 
       override def loadDefaultComputers: F[Unit] =
         computerRepository.loadAll(initialComputers)

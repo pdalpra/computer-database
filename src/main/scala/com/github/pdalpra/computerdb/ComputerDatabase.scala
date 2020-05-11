@@ -37,12 +37,12 @@ class ComputerDatabase[F[_]: ConcurrentEffect: ContextShift: Timer] {
     val initSchema         = SchemaInitializer[F](appResources.transactor)
     val dataLoader         = DataLoader[F](blocker)
     val companyRepository  = CompanyRepository[F](appResources.transactor)
-    val computerRepository = ComputerRepository[F](appResources.transactor, config.db.readOnlyComputers)
+    val computerRepository = ComputerRepository[F](appResources.transactor)
 
     for {
       _              <- initSchema.initSchema
       initialData    <- dataLoader.loadInitialData
-      computerService = ComputerService(computerRepository, companyRepository, initialData.computers)
+      computerService = ComputerService(computerRepository, companyRepository, config.db.readOnlyComputers, initialData.computers)
       routes          = Routes[F](computerService, blocker)
       _              <- companyRepository.loadAll(initialData.companies)
       _              <- computerRepository.loadAll(initialData.computers)
