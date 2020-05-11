@@ -8,7 +8,6 @@ import fs2.io.unsafeReadInputStream
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 import io.circe.Decoder
 import io.circe.fs2.{ byteArrayParser, decoder }
-import io.circe.generic.semiauto._
 import io.circe.refined._
 
 final case class InitialData(companies: List[NonEmptyString], computers: List[UnsavedComputer])
@@ -26,9 +25,6 @@ object DataLoader {
 
   private class DefaultDataLoader[F[_]: Sync: ContextShift](blocker: Blocker) extends DataLoader[F] {
     private val logger = Slf4jLogger.getLogger[F]
-
-    implicit val companyIdDecoder: Decoder[Company.Id]     = Decoder[UniqueId].map(Company.Id.apply)
-    implicit val computerDecoder: Decoder[UnsavedComputer] = deriveDecoder
 
     override def loadInitialData: F[InitialData] =
       for {
