@@ -64,7 +64,7 @@ libraryDependencies ++= Seq(
   "io.chrisdavenport" %% "log4cats-slf4j"  % "1.1.1",
   "ch.qos.logback"     % "logback-classic" % "1.2.3" % Runtime,
   // Misc
-  "com.beachape" %% "enumeratum" % "1.6.0",
+  "com.beachape" %% "enumeratum" % "1.6.1",
   // Testing
   "org.scalatest"     %% "scalatest"       % "3.1.2"   % "test,it",
   "org.scalatestplus" %% "scalacheck-1-14" % "3.1.2.0" % "test",
