@@ -35,7 +35,7 @@ libraryDependencies ++= Seq(
   "org.typelevel" %% "mouse"       % "0.25",
   // ZIO
   "dev.zio" %% "zio"              % "1.0.0-RC19",
-  "dev.zio" %% "zio-interop-cats" % "2.0.0.0-RC13",
+  "dev.zio" %% "zio-interop-cats" % "2.0.0.0-RC14",
   // Http4s / Scalatags
   "org.http4s"  %% "http4s-dsl"          % http4sVersion,
   "org.http4s"  %% "http4s-blaze-server" % http4sVersion,
