@@ -1,6 +1,5 @@
 package com.github.pdalpra.computerdb.db
 
-import com.github.pdalpra.computerdb.db.DoobieInstances._
 import com.github.pdalpra.computerdb.model._
 
 import cats.effect.Sync
