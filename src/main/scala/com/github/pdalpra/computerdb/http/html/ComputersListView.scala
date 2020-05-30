@@ -10,7 +10,7 @@ import cats.implicits._
 import scalatags.Text._
 import scalatags.Text.all._
 
-object ComputersListView {
+private[html] object ComputersListView {
   private val dateFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
 
   final case class Context(page: Page[Computer], parameters: ComputerListParameters)
