@@ -13,7 +13,7 @@ object ComputerForm {
     FormDecoder.derive[UnsavedComputer].emap(validateDates)
 
   private def validateDates(computer: UnsavedComputer): FormResult[UnsavedComputer] = {
-    val introducedBeforeDiscontinued = (computer.introduced, computer.discontinued).mapN(_.isBefore(_)).getOrElse(true)
+    val introducedBeforeDiscontinued = (computer.introduced, computer.discontinued).mapN(_.isBeforeOrSameDay(_)).getOrElse(true)
     Validated.condNec(
       introducedBeforeDiscontinued,
       computer,

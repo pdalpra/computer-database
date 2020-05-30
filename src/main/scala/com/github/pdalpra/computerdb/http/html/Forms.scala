@@ -11,7 +11,7 @@ import org.http4s.UrlForm
 import scalatags.Text._
 import scalatags.Text.all._
 
-object Forms {
+private[html] object Forms {
   final case class InvalidFormState(form: UrlForm, errors: NonEmptyChain[FieldError])
 
   final case class FormContext(

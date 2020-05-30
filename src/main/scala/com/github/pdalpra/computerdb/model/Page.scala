@@ -2,6 +2,9 @@ package com.github.pdalpra.computerdb.model
 
 import eu.timepit.refined.api._
 import eu.timepit.refined.numeric._
+import io.circe.Encoder
+import io.circe.generic.semiauto._
+import io.circe.refined._
 
 object Page {
   type Number = Int Refined Positive
@@ -12,6 +15,8 @@ object Page {
 
   val DefaultPage: Number   = Number.unsafeFrom(1)
   val DefaultPageSize: Size = Page.Size.unsafeFrom(10)
+
+  implicit def encoder[A: Encoder]: Encoder[Page[A]] = deriveEncoder
 }
 final case class Page[A](items: List[A], page: Page.Number, offset: Int, total: Int) {
 

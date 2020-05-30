@@ -1,4 +1,4 @@
-package com.github.pdalpra.computerdb.http
+package com.github.pdalpra.computerdb.http.html
 
 import java.nio.charset.StandardCharsets
 import java.util.Base64
@@ -8,7 +8,7 @@ import cats.data.Kleisli
 import cats.implicits._
 import org.http4s.{ Http, Request, Response, ResponseCookie }
 
-object FlashCookie {
+private[html] object FlashCookie {
 
   private val flashCookieName = "http4s-flash"
 
