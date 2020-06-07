@@ -1,5 +1,7 @@
 package com.github.pdalpra.computerdb.db
 
+import java.time.LocalDate
+
 import com.github.pdalpra.computerdb.model._
 
 import cats.effect.Sync
@@ -85,5 +87,10 @@ object ComputerRepository {
 
       private val insertComputer =
         Update[UnsavedComputer]("insert into computer(name, introduced, discontinued, company_id) values (?,?,?,?)")
+
+      @SuppressWarnings(Array("org.wartremover.warts.TryPartial"))
+      private implicit val computerRead: Read[Computer] =
+        Read[(Computer.Id, NonEmptyString, Option[LocalDate], Option[LocalDate], Option[Company])]
+          .map((Computer.apply _).tupled(_).leftMap(new IllegalArgumentException(_)).toTry.get)
     }
 }

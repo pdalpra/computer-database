@@ -6,11 +6,13 @@ import cats.implicits._
 import cats.{ derived, Eq }
 import eu.timepit.refined.cats._
 import io.circe.Encoder
-import io.circe.generic.semiauto._
 import io.circe.refined._
 
 object Computer {
-  implicit val encoder: Encoder[Computer] = deriveEncoder
+  implicit val encoder: Encoder[Computer] =
+    Encoder.forProduct5("id", "name", "introduced", "discontinued", "company")(computer =>
+      (computer.id, computer.name, computer.introduced, computer.discontinued, computer.company)
+    )
 
   object Id {
     implicit val eq: Eq[Id]           = derived.semi.eq
@@ -19,8 +21,25 @@ object Computer {
   final case class Id(value: UniqueId) {
     override def toString: String = value.toString()
   }
+
+  def apply(
+      id: Computer.Id,
+      name: NonEmptyString,
+      introduced: Option[LocalDate],
+      discontinued: Option[LocalDate],
+      company: Option[Company]
+  ): Either[String, Computer] =
+    validateDates(introduced, discontinued).as(new Computer(id, name, introduced, discontinued, company) {})
+
+  def validateDates(introduced: Option[LocalDate], discontinued: Option[LocalDate]): Either[String, Unit] =
+    (introduced, discontinued)
+      .mapN {
+        case (introduced, discontinued) =>
+          Either.cond(introduced.isBeforeOrSameDay(discontinued), (), "Discontinued date is before introduction date")
+      }
+      .getOrElse(Right(()))
 }
-final case class Computer(
+sealed abstract case class Computer(
     id: Computer.Id,
     name: NonEmptyString,
     introduced: Option[LocalDate],
