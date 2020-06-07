@@ -9,10 +9,8 @@ import io.circe.refined._
 
 object UnsavedComputer {
   implicit val decoder: Decoder[UnsavedComputer] =
-    deriveDecoder[UnsavedComputer].emap { computer =>
-      val introducedBeforeDiscontinued = (computer.introduced, computer.discontinued).mapN(_.isBeforeOrSameDay(_)).getOrElse(true)
-      Either.cond(introducedBeforeDiscontinued, computer, "Discontinued date is before introduction date")
-    }
+    deriveDecoder[UnsavedComputer]
+      .emap(computer => Computer.validateDates(computer.introduced, computer.discontinued).as(computer))
 }
 final case class UnsavedComputer(
     name: NonEmptyString,
