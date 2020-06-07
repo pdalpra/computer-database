@@ -12,6 +12,7 @@ import org.http4s._
 import org.http4s.circe.jsonEncoderWithPrinterOf
 import org.http4s.circe.CirceEntityDecoder._
 import org.http4s.dsl.Http4sDsl
+import org.http4s.server.middleware.CORS
 
 private[http] object Routes {
 
@@ -25,7 +26,7 @@ private[http] object Routes {
     private implicit def circeEntityEncoder[A: Encoder]: EntityEncoder[F, A] =
       jsonEncoderWithPrinterOf(noSpacesNoNullsPrinter)
 
-    def routes: HttpRoutes[F] = computerReadRoutes <+> computerWriteRoutes
+    def routes: HttpRoutes[F] = CORS(computerReadRoutes <+> computerWriteRoutes)
 
     private def computerReadRoutes =
       HttpRoutes.of[F] {
@@ -50,7 +51,7 @@ private[http] object Routes {
             response        <- Ok(savedComputer)
           } yield response
 
-        case req @ PUT -> Root / ComputerId(id) =>
+        case req @ POST -> Root / ComputerId(id) =>
           (for {
             unsavedComputer <- OptionT.liftF(req.as[UnsavedComputer])
             _               <- OptionT(computerService.fetchComputer(id))
