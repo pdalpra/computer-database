@@ -24,7 +24,7 @@ val circeVersion      = "0.13.0"
 val doobieVersion     = "0.9.0"
 val fs2Version        = "2.4.2"
 val http4sVersion     = "0.21.5"
-val pureconfigVersion = "0.12.3"
+val pureconfigVersion = "0.13.0"
 val refinedVersion    = "0.9.14"
 
 libraryDependencies ++= Seq(
