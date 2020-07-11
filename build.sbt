@@ -1,7 +1,7 @@
 import java.time._
 import java.time.format.DateTimeFormatter
 
-scalaVersion := "2.13.2"
+scalaVersion := "2.13.3"
 scalafmtOnCompile := true
 
 lazy val It = config("it") extend Test
