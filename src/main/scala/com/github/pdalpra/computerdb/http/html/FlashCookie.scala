@@ -23,7 +23,9 @@ private[html] object FlashCookie {
   implicit class FlashRequestSyntax[F[_]](request: Request[F]) {
 
     def flashData: Option[String] =
-      request.cookies.collectFirst { case cookie if cookie.name === flashCookieName => base64Decode(cookie.content) }
+      request.cookies.collectFirst {
+        case cookie if cookie.name === flashCookieName => base64Decode(cookie.content)
+      }
 
     private def base64Decode(encoded: String) =
       new String(Base64.getDecoder.decode(encoded), StandardCharsets.UTF_8.name)

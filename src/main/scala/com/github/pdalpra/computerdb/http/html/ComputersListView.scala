@@ -71,16 +71,19 @@ private[html] object ComputersListView {
         })
       )
 
-  private def pageNavigation(context: Context) =
+  private def pageNavigation(context: Context) = {
+    val firstPageItemId = context.page.offset + 1
+    val lastPageItemId  = context.page.offset + context.page.items.size
     div(id := "pagination", `class` := "pagination")(
       ul(
         pageNavButton(context.page.previous, context, "← Previous", "prev"),
         li(`class` := "current")(
-          a(s"Displaying ${context.page.offset + 1} to ${context.page.offset + context.page.items.size} of ${context.page.total}")
+          a(s"Displaying $firstPageItemId to $lastPageItemId of ${context.page.total}")
         ),
         pageNavButton(context.page.next, context, "Next →", "next")
       )
     )
+  }
 
   private def pageNavButton(pagePointer: Option[Page.Number], context: Context, message: String, cssClass: String) =
     pagePointer
