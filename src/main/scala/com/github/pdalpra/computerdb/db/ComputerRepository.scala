@@ -45,7 +45,7 @@ object ComputerRepository {
 
         val normalizedFilter = nameFilter.map(_.value.toLowerCase)
         val filterFragment   = Fragments.whereAndOpt(normalizedFilter.map(name => fr"lower(computer.name) like ${s"%$name%"}"))
-        val sortFragment     = fr"order by " ++ Fragment.const(sort.column) ++ Fragment.const(order.entryName)
+        val sortFragment     = fr"order by " ++ Fragment.const(sort.column) ++ Fragment.const(order.show)
         val pageQuery        = baseSelect ++ filterFragment ++ sortFragment ++ fr"nulls last limit $pageSize offset $offset"
         val rowsCountQuery   = fr" select count(1) from computer left join company on computer.company_id = company.id" ++ filterFragment
 

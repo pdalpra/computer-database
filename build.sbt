@@ -22,6 +22,7 @@ addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
 
 val circeVersion      = "0.13.0"
 val doobieVersion     = "0.9.0"
+val enumeratumVersion = "1.6.1"
 val fs2Version        = "2.4.2"
 val http4sVersion     = "0.21.6"
 val pureconfigVersion = "0.13.0"
@@ -65,7 +66,8 @@ libraryDependencies ++= Seq(
   "io.chrisdavenport" %% "log4cats-slf4j"  % "1.1.1",
   "ch.qos.logback"     % "logback-classic" % "1.2.3" % Runtime,
   // Misc
-  "com.beachape" %% "enumeratum" % "1.6.1",
+  "com.beachape" %% "enumeratum"      % enumeratumVersion,
+  "com.beachape" %% "enumeratum-cats" % enumeratumVersion,
   // Testing
   "org.scalatest"     %% "scalatest"       % "3.2.0"   % "test,it",
   "org.scalatestplus" %% "scalacheck-1-14" % "3.2.0.0" % "test",
