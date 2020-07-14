@@ -1,5 +1,6 @@
 package com.github.pdalpra.computerdb.http.html
 
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 import com.github.pdalpra.computerdb.db.ComputerSort
@@ -7,11 +8,16 @@ import com.github.pdalpra.computerdb.model._
 import com.github.pdalpra.computerdb.service.ComputerListParameters
 
 import cats.implicits._
+import cats.Show
+import eu.timepit.refined.cats._
 import scalatags.Text._
 import scalatags.Text.all._
 
 private[html] object ComputersListView {
+
   private val dateFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
+
+  implicit val localDateShow: Show[LocalDate] = Show.show(dateFormatter.format)
 
   final case class Context(page: Page[Computer], parameters: ComputerListParameters)
 
@@ -57,10 +63,10 @@ private[html] object ComputersListView {
         ),
         tbody(context.page.items.map { computer =>
           tr(
-            td(a(href := s"/computers/${computer.id.value}")(computer.name.value)),
-            td(computer.introduced.fold("-")(dateFormatter.format)),
-            td(computer.discontinued.fold("-")(dateFormatter.format)),
-            td(computer.company.fold("-")(_.name.value))
+            td(a(href := s"/computers/${computer.id.show}")(computer.name.show)),
+            td(computer.introduced.fold("-")(_.show)),
+            td(computer.discontinued.fold("-")(_.show)),
+            td(computer.company.fold("-")(_.name.show))
           )
         })
       )
@@ -95,8 +101,8 @@ private[html] object ComputersListView {
   private def pageLink(targetPage: Page.Number, context: Context, newSort: Option[ComputerSort], newOrder: Option[Order]) = {
     val sort    = newSort.getOrElse(context.parameters.sort)
     val order   = newOrder.getOrElse(context.parameters.order)
-    val baseUrl = s"/computers?p=$targetPage&n=${context.parameters.size}&s=${sort.value}&d=${order.entryName}"
-    context.parameters.nameFilter.map(filter => baseUrl + s"&f=$filter").getOrElse(baseUrl)
+    val baseUrl = s"/computers?p=$targetPage&n=${context.parameters.size}&s=${sort.show}&d=${order.show}"
+    context.parameters.nameFilter.map(filter => s"$baseUrl&f=$filter").getOrElse(baseUrl)
   }
 
   private def orderCssClass(order: Order) =

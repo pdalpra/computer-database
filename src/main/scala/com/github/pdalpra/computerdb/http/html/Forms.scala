@@ -1,17 +1,23 @@
 package com.github.pdalpra.computerdb.http.html
 
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 import com.github.pdalpra.computerdb.http.forms.FieldError
 import com.github.pdalpra.computerdb.model._
 
 import cats.data.NonEmptyChain
 import cats.implicits._
+import cats.Show
+import eu.timepit.refined.cats._
 import org.http4s.UrlForm
 import scalatags.Text._
 import scalatags.Text.all._
 
 private[html] object Forms {
+
+  implicit val localDateShow: Show[LocalDate] = Show.show(DateTimeFormatter.ISO_DATE.format)
+
   final case class InvalidFormState(form: UrlForm, errors: NonEmptyChain[FieldError])
 
   final case class FormContext(
@@ -44,15 +50,15 @@ private[html] object Forms {
 
     PageTemplate.pageTemplate(
       h1("Edit computer"),
-      computerForm(s"/computers/${computer.id}", "Save this computer", context),
+      computerForm(s"/computers/${computer.id.show}", "Save this computer", context),
       deleteComputerButton(computer)
     )
   }
 
   private def computerForm(targetUrl: String, saveMessage: String, context: FormContext) = {
     val name         = context.name.map(_.value).getOrElse("")
-    val introduced   = context.introduced.map(_.toString()).getOrElse("")
-    val discontinued = context.discontinued.map(_.toString()).getOrElse("")
+    val introduced   = context.introduced.map(_.show).getOrElse("")
+    val discontinued = context.discontinued.map(_.show).getOrElse("")
 
     form(action := targetUrl, method := "POST")(
       fieldset(
@@ -70,7 +76,7 @@ private[html] object Forms {
   }
 
   private def deleteComputerButton(computer: Computer) =
-    form(`class` := "topRight", action := s"/computers/${computer.id}/delete", method := "POST")(
+    form(`class` := "topRight", action := s"/computers/${computer.id.show}/delete", method := "POST")(
       input(`type` := "submit", value := "Delete this computer", `class` := "btn danger")
     )
 
@@ -96,7 +102,7 @@ private[html] object Forms {
           option(`class` := "blank", value := "")("-- Choose a company --"),
           companies.map { company =>
             val isSelected = current.collect { case id if id === company.id => selected := "" }
-            option(value := company.id.toString(), isSelected)(company.name.toString())
+            option(value := company.id.show, isSelected)(company.name.show)
           }
         )
       )
