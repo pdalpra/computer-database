@@ -28,7 +28,7 @@ object Computer {
       discontinued: Option[LocalDate],
       company: Option[Company]
   ): Either[String, Computer] =
-    validateDates(introduced, discontinued).as(new Computer(id, name, introduced, discontinued, company) {})
+    validateDates(introduced, discontinued).as(new Computer(id, name, introduced, discontinued, company))
 
   def validateDates(introduced: Option[LocalDate], discontinued: Option[LocalDate]): Either[String, Unit] =
     (introduced, discontinued)
@@ -38,7 +38,7 @@ object Computer {
       }
       .getOrElse(Right(()))
 }
-sealed abstract case class Computer(
+final case class Computer private (
     id: Computer.Id,
     name: NonEmptyString,
     introduced: Option[LocalDate],

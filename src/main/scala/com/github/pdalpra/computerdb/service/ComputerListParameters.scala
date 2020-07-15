@@ -4,6 +4,8 @@ import com.github.pdalpra.computerdb.db.ComputerSort
 import com.github.pdalpra.computerdb.model.{ NonEmptyString, Order, Page }
 
 object ComputerListParameters {
+
+  @SuppressWarnings(Array("org.wartremover.warts.Overloading"))
   def apply(
       number: Option[Page.Number],
       size: Option[Page.Size],
@@ -17,9 +19,9 @@ object ComputerListParameters {
       sort.getOrElse(ComputerSort.Name),
       order.getOrElse(Order.Asc),
       nameFilter
-    ) {}
+    )
 }
-sealed abstract case class ComputerListParameters(
+final case class ComputerListParameters private (
     number: Page.Number,
     size: Page.Size,
     sort: ComputerSort,
