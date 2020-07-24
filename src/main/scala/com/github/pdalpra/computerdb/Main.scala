@@ -1,11 +1,9 @@
 package com.github.pdalpra.computerdb
 
-import zio._
-import zio.interop.catz._
-import zio.interop.catz.implicits._
+import cats.effect.{ ExitCode, IO, IOApp }
 
-object Main extends CatsApp {
+object Main extends IOApp {
 
-  override def run(args: List[String]): URIO[ZEnv, ExitCode] =
-    new ComputerDatabase[Task].program.exitCode
+  override def run(args: List[String]): IO[ExitCode] =
+    new ComputerDatabase[IO].program.as(ExitCode.Success)
 }
