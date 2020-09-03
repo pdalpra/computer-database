@@ -4,7 +4,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeParseException
 
 import cats.data.Validated
-import cats.implicits._
+import cats.syntax.all._
 import eu.timepit.refined.api.{ RefType, Validate }
 import mouse.string._
 

@@ -7,7 +7,7 @@ import com.github.pdalpra.computerdb.db.ComputerSort
 import com.github.pdalpra.computerdb.model._
 import com.github.pdalpra.computerdb.service.ComputerListParameters
 
-import cats.implicits._
+import cats.syntax.all._
 import cats.Show
 import eu.timepit.refined.cats._
 import scalatags.Text._

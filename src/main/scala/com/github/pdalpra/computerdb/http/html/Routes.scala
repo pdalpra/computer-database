@@ -12,7 +12,7 @@ import com.github.pdalpra.computerdb.service._
 
 import cats.data.{ NonEmptyChain, OptionT }
 import cats.effect.Sync
-import cats.implicits._
+import cats.syntax.all._
 import org.http4s._
 import org.http4s.dsl.Http4sDsl
 

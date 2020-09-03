@@ -6,7 +6,7 @@ import com.github.pdalpra.computerdb.service._
 
 import cats.data.OptionT
 import cats.effect.Sync
-import cats.implicits._
+import cats.syntax.all._
 import io.circe.{ Encoder, Printer }
 import org.http4s._
 import org.http4s.circe.jsonEncoderWithPrinterOf

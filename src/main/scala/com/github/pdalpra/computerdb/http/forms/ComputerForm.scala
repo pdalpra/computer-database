@@ -3,7 +3,7 @@ package com.github.pdalpra.computerdb.http.forms
 import com.github.pdalpra.computerdb.model._
 
 import cats.data.Validated
-import cats.implicits._
+import cats.syntax.all._
 
 object ComputerForm {
 

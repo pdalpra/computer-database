@@ -3,7 +3,7 @@ package com.github.pdalpra.computerdb.db
 import com.github.pdalpra.computerdb.model._
 
 import cats.effect.Sync
-import cats.implicits._
+import cats.syntax.all._
 import doobie._
 import doobie.implicits._
 import doobie.refined.implicits._

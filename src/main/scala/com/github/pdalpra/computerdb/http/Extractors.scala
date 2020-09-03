@@ -3,7 +3,7 @@ package com.github.pdalpra.computerdb.http
 import com.github.pdalpra.computerdb.db.ComputerSort
 import com.github.pdalpra.computerdb.model._
 
-import cats.implicits._
+import cats.syntax.all._
 import eu.timepit.refined.api._
 import mouse.string._
 import org.http4s.{ ParseFailure, ParseResult, QueryParamDecoder }

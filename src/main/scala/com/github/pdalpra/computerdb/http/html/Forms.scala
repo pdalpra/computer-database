@@ -7,7 +7,7 @@ import com.github.pdalpra.computerdb.http.forms.FieldError
 import com.github.pdalpra.computerdb.model._
 
 import cats.data.NonEmptyChain
-import cats.implicits._
+import cats.syntax.all._
 import cats.Show
 import eu.timepit.refined.cats._
 import org.http4s.UrlForm

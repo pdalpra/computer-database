@@ -1,6 +1,6 @@
 package com.github.pdalpra.computerdb.http.forms
 
-import cats.implicits._
+import cats.syntax.all._
 import org.http4s.UrlForm
 
 trait FieldDecoder[A] { self =>
