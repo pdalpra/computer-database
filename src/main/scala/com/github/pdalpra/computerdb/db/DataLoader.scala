@@ -3,7 +3,7 @@ package com.github.pdalpra.computerdb.db
 import com.github.pdalpra.computerdb.model._
 
 import cats.effect.{ Blocker, ContextShift, Sync }
-import cats.implicits._
+import cats.syntax.all._
 import fs2.io.unsafeReadInputStream
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 import io.circe.Decoder

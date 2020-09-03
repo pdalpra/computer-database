@@ -2,7 +2,7 @@ package com.github.pdalpra.computerdb.model
 
 import java.time.LocalDate
 
-import cats.implicits._
+import cats.syntax.all._
 import cats.{ Eq, Show }
 import eu.timepit.refined.cats._
 import io.circe.Encoder

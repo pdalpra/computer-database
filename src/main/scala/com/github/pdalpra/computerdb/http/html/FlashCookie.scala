@@ -5,7 +5,7 @@ import java.util.Base64
 
 import cats.Functor
 import cats.data.Kleisli
-import cats.implicits._
+import cats.syntax.all._
 import org.http4s.{ Http, Request, Response, ResponseCookie }
 
 private[html] object FlashCookie {

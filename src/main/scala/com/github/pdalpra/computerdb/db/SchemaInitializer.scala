@@ -1,7 +1,7 @@
 package com.github.pdalpra.computerdb.db
 
 import cats.effect.Sync
-import cats.implicits._
+import cats.syntax.all._
 import doobie._
 import doobie.implicits._
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger

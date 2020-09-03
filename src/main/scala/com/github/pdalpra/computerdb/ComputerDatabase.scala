@@ -9,7 +9,7 @@ import com.github.pdalpra.computerdb.service.ComputerService
 
 import cats.effect._
 import cats.effect.implicits._
-import cats.implicits._
+import cats.syntax.all._
 import doobie._
 import doobie.h2.H2Transactor
 import doobie.h2.syntax.h2transactor._
