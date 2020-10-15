@@ -1,6 +1,8 @@
 import java.time._
 import java.time.format.DateTimeFormatter
 
+lintUnusedKeysOnLoad in Global := false
+
 scalaVersion := "2.13.3"
 scalafmtOnCompile := true
 
