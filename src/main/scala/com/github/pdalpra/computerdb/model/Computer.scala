@@ -32,9 +32,8 @@ object Computer {
 
   def validateDates(introduced: Option[LocalDate], discontinued: Option[LocalDate]): Either[String, Unit] =
     (introduced, discontinued)
-      .mapN {
-        case (introduced, discontinued) =>
-          Either.cond(introduced.isBeforeOrSameDay(discontinued), (), "Discontinued date is before introduction date")
+      .mapN { case (introduced, discontinued) =>
+        Either.cond(introduced.isBeforeOrSameDay(discontinued), (), "Discontinued date is before introduction date")
       }
       .getOrElse(Right(()))
 }
