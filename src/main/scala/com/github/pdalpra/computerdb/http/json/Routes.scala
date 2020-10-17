@@ -13,6 +13,7 @@ import org.http4s.circe.jsonEncoderWithPrinterOf
 import org.http4s.circe.CirceEntityDecoder._
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.middleware.CORS
+import org.http4s.server.Router
 
 private[http] object Routes {
 
@@ -26,7 +27,18 @@ private[http] object Routes {
     private implicit def circeEntityEncoder[A: Encoder]: EntityEncoder[F, A] =
       jsonEncoderWithPrinterOf(noSpacesNoNullsPrinter)
 
-    def routes: HttpRoutes[F] = CORS(computerReadRoutes <+> computerWriteRoutes)
+    def routes: HttpRoutes[F] = CORS(router)
+
+    private def router =
+      Router(
+        "/computers" -> (computerReadRoutes <+> computerWriteRoutes),
+        "/companies" -> companiesRoutes
+      )
+
+    private def companiesRoutes =
+      HttpRoutes.of[F] { case GET -> Root =>
+        Ok(computerService.fetchCompanies)
+      }
 
     private def computerReadRoutes =
       HttpRoutes.of[F] {
