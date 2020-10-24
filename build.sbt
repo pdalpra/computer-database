@@ -34,7 +34,7 @@ libraryDependencies ++= Seq(
   // Cats / Cats Effect
   "org.typelevel" %% "cats-core"   % "2.2.0",
   "org.typelevel" %% "cats-effect" % "2.2.0",
-  "org.typelevel" %% "kittens"     % "2.1.0",
+  "org.typelevel" %% "kittens"     % "2.2.0",
   "org.typelevel" %% "mouse"       % "0.25",
   // Http4s / Scalatags
   "org.http4s"  %% "http4s-circe"        % http4sVersion,
