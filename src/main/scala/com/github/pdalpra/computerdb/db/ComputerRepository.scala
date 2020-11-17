@@ -1,6 +1,7 @@
 package com.github.pdalpra.computerdb.db
 
 import java.time.LocalDate
+import java.util.Locale
 
 import com.github.pdalpra.computerdb.model._
 
@@ -43,7 +44,7 @@ object ComputerRepository {
       ): F[Page[Computer]] = {
         val offset = (page.value - 1) * pageSize.value
 
-        val normalizedFilter = nameFilter.map(_.value.toLowerCase)
+        val normalizedFilter = nameFilter.map(_.value.toLowerCase(Locale.ENGLISH))
         val filterFragment   = Fragments.whereAndOpt(normalizedFilter.map(name => fr"lower(computer.name) like ${s"%$name%"}"))
         val sortFragment     = fr"order by " ++ Fragment.const(sort.column) ++ Fragment.const(order.show)
         val pageQuery        = baseSelect ++ filterFragment ++ sortFragment ++ fr"nulls last limit $pageSize offset $offset"
