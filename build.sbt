@@ -32,7 +32,7 @@ val refinedVersion    = "0.9.18"
 
 libraryDependencies ++= Seq(
   // Cats / Cats Effect
-  "org.typelevel" %% "cats-core"   % "2.2.0",
+  "org.typelevel" %% "cats-core"   % "2.3.0",
   "org.typelevel" %% "cats-effect" % "2.2.0",
   "org.typelevel" %% "kittens"     % "2.2.0",
   "org.typelevel" %% "mouse"       % "0.25",
