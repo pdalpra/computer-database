@@ -14,7 +14,7 @@ import doobie._
 import doobie.h2.H2Transactor
 import doobie.h2.syntax.h2transactor._
 import doobie.util.ExecutionContexts
-import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
+import org.typelevel.log4cats.slf4j.Slf4jLogger
 import org.http4s.HttpApp
 import org.http4s.server.blaze.BlazeServerBuilder
 import pureconfig.ConfigSource

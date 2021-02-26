@@ -5,7 +5,7 @@ import com.github.pdalpra.computerdb.model._
 import cats.effect.{ Blocker, ContextShift, Sync }
 import cats.syntax.all._
 import fs2.io.unsafeReadInputStream
-import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
+import org.typelevel.log4cats.slf4j.Slf4jLogger
 import io.circe.Decoder
 import io.circe.fs2.{ byteArrayParser, decoder }
 import io.circe.refined._
