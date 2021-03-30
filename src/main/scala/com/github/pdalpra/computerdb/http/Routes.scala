@@ -3,7 +3,7 @@ package com.github.pdalpra.computerdb.http
 import com.github.pdalpra.computerdb.ComputerDatabaseBuildInfo
 import com.github.pdalpra.computerdb.service._
 
-import cats.effect.{ Blocker, ContextShift, Sync }
+import cats.effect.Sync
 import org.http4s._
 import org.http4s.dsl.Http4sDsl
 import org.http4s.headers.`Content-Type`
@@ -13,7 +13,7 @@ import org.http4s.server.staticcontent._
 
 object Routes {
 
-  def apply[F[_]: Sync: ContextShift](computerService: ComputerService[F], blocker: Blocker): HttpApp[F] =
+  def apply[F[_]: Sync: ContextShift](computerService: ComputerService[F]): HttpApp[F] =
     new Routes[F](computerService, blocker).httpApp
 
   private class Routes[F[_]: Sync: ContextShift](computerService: ComputerService[F], blocker: Blocker)
