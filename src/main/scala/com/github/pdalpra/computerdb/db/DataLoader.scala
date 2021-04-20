@@ -2,7 +2,7 @@ package com.github.pdalpra.computerdb.db
 
 import com.github.pdalpra.computerdb.model._
 
-import cats.effect.{ Blocker, ContextShift, Sync }
+import cats.effect.Sync
 import cats.syntax.all._
 import fs2.io.unsafeReadInputStream
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
@@ -20,7 +20,7 @@ object DataLoader {
 
   private val chunkSize = 8192
 
-  def apply[F[_]: Sync: ContextShift](blocker: Blocker): DataLoader[F] =
+  def apply[F[_]: Sync: ContextShift]: DataLoader[F] =
     new DataLoader[F] {
       private val logger = Slf4jLogger.getLogger[F]
 

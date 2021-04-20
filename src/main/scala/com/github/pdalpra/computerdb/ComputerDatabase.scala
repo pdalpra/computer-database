@@ -19,21 +19,22 @@ import org.http4s.HttpApp
 import org.http4s.server.blaze.BlazeServerBuilder
 import pureconfig.ConfigSource
 import pureconfig.module.catseffect.syntax._
+import cats.effect.{ Resource, Temporal }
 
-class ComputerDatabase[F[_]: ConcurrentEffect: ContextShift: Timer] {
+class ComputerDatabase[F[_]: ConcurrentEffect: ContextShift: Temporal] {
 
   private val logger       = Slf4jLogger.getLogger[F]
   private val configSource = ConfigSource.default.at("app")
 
   def program: F[Unit] =
-    Blocker[F].use { blocker =>
+    Resource.unit[F].use { blocker =>
       for {
         config <- configSource.loadF[F, Config](blocker)
         _      <- appResources(blocker, config).use(setup(_, blocker, config))
       } yield ()
     }
 
-  private def setup(appResources: AppResources, blocker: Blocker, config: Config): F[Unit] = {
+  private def setup(appResources: AppResources, config: Config): F[Unit] = {
     val initSchema         = SchemaInitializer[F](appResources.transactor)
     val dataLoader         = DataLoader[F](blocker)
     val companyRepository  = CompanyRepository[F](appResources.transactor)
@@ -61,7 +62,7 @@ class ComputerDatabase[F[_]: ConcurrentEffect: ContextShift: Timer] {
     }
 
   private def schedule(action: F[Unit], interval: FiniteDuration, errorMessage: String): F[Unit] =
-    (Timer[F].sleep(interval) >> action.handleErrorWith(ex => logger.error(s"$errorMessage: $ex"))).foreverM.start.void
+    (Temporal[F].sleep(interval) >> action.handleErrorWith(ex => logger.error(s"$errorMessage: $ex"))).foreverM.start.void
 
   private def server(httpApp: HttpApp[F], config: Config.Server, serverExecutionContext: ExecutionContext): F[Unit] =
     BlazeServerBuilder[F](serverExecutionContext)
@@ -75,7 +76,7 @@ class ComputerDatabase[F[_]: ConcurrentEffect: ContextShift: Timer] {
       .compile
       .drain
 
-  private def appResources(blocker: Blocker, config: Config): Resource[F, AppResources] =
+  private def appResources(config: Config): Resource[F, AppResources] =
     for {
       serverEC     <- ExecutionContexts.fixedThreadPool(config.server.threadPoolSize.value)
       connectionEC <- ExecutionContexts.cachedThreadPool
