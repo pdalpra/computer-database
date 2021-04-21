@@ -28,7 +28,7 @@ val enumeratumVersion = "1.6.1"
 val fs2Version        = "2.5.4"
 val http4sVersion     = "0.21.16"
 val pureconfigVersion = "0.14.1"
-val refinedVersion    = "0.9.23"
+val refinedVersion    = "0.9.24"
 
 libraryDependencies ++= Seq(
   // Cats / Cats Effect
