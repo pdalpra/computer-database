@@ -25,7 +25,7 @@ addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
 val circeVersion      = "0.13.0"
 val doobieVersion     = "0.10.0"
 val enumeratumVersion = "1.6.1"
-val fs2Version        = "2.5.5"
+val fs2Version        = "2.5.6"
 val http4sVersion     = "0.21.16"
 val pureconfigVersion = "0.14.1"
 val refinedVersion    = "0.9.23"
@@ -33,8 +33,8 @@ val refinedVersion    = "0.9.23"
 libraryDependencies ++= Seq(
   // Cats / Cats Effect
   "org.typelevel" %% "cats-core"   % "2.6.1",
-  "org.typelevel" %% "cats-effect" % "3.1.1",
-  "org.typelevel" %% "kittens"     % "2.3.1",
+  "org.typelevel" %% "cats-effect" % "2.5.1",
+  "org.typelevel" %% "kittens"     % "2.3.2",
   "org.typelevel" %% "mouse"       % "1.0.2",
   // Http4s / Scalatags
   "org.http4s"  %% "http4s-circe"        % http4sVersion,
@@ -68,7 +68,7 @@ libraryDependencies ++= Seq(
   "com.beachape" %% "enumeratum"      % enumeratumVersion,
   "com.beachape" %% "enumeratum-cats" % enumeratumVersion,
   // Testing
-  "org.scalatest"     %% "scalatest"       % "3.2.8"   % "test,it",
+  "org.scalatest"     %% "scalatest"       % "3.2.9"   % "test,it",
   "org.scalatestplus" %% "scalacheck-1-14" % "3.2.2.0" % "test",
   "org.scalacheck"    %% "scalacheck"      % "1.15.4"  % "test"
 )
