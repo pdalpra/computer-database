@@ -24,4 +24,4 @@ jobs:
             ${{ runner.OS }}-coursier-cache-${{ matrix.scala }}-
             ${{ runner.OS }}-coursier-cache-
       - name: CI pipeline
-        run: csbt scalafmtSbtCheck scalafmtCheckAll test
+        run: sbt scalafmtSbtCheck scalafmtCheckAll test
