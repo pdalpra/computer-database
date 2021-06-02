@@ -9,5 +9,5 @@ Universal / javaOptions ++= Seq(
   "-J-XX:+UnlockExperimentalVMOptions",
   "-J-XX:+EnableJVMCI",
   "-J-XX:+UseJVMCICompiler",
-  "-Dgraal.GraalArithmeticStubs=false",
+  "-Dgraal.GraalArithmeticStubs=false"
 )

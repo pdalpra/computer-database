@@ -3,7 +3,7 @@ package com.github.pdalpra.computerdb.http
 import com.github.pdalpra.computerdb.ComputerDatabaseBuildInfo
 import com.github.pdalpra.computerdb.service._
 
-import cats.effect.{ Blocker, ContextShift, Sync }
+import cats.effect.Async
 import org.http4s._
 import org.http4s.dsl.Http4sDsl
 import org.http4s.headers.`Content-Type`
@@ -13,12 +13,10 @@ import org.http4s.server.staticcontent._
 
 object Routes {
 
-  def apply[F[_]: Sync: ContextShift](computerService: ComputerService[F], blocker: Blocker): HttpApp[F] =
-    new Routes[F](computerService, blocker).httpApp
+  def apply[F[_]: Async](computerService: ComputerService[F]): HttpApp[F] =
+    new Routes[F](computerService).httpApp
 
-  private class Routes[F[_]: Sync: ContextShift](computerService: ComputerService[F], blocker: Blocker)
-      extends Http4sDsl[F]
-      with Extractors {
+  private class Routes[F[_]: Async](computerService: ComputerService[F]) extends Http4sDsl[F] with Extractors {
 
     def httpApp: HttpApp[F] =
       Router(
@@ -35,6 +33,6 @@ object Routes {
       }
 
     private def assetsRoutes =
-      resourceService(ResourceService.Config("assets", blocker, cacheStrategy = MemoryCache[F]()))
+      resourceServiceBuilder("assets").withCacheStrategy(MemoryCache[F]()).toRoutes
   }
 }

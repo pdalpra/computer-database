@@ -1,9 +1,9 @@
 package com.github.pdalpra.computerdb
 
-import cats.effect.{ ExitCode, IO, IOApp }
+import cats.effect.{ IO, IOApp }
 
-object Main extends IOApp {
+object Main extends IOApp.Simple {
 
-  override def run(args: List[String]): IO[ExitCode] =
-    new ComputerDatabase[IO].program.as(ExitCode.Success)
+  override def run: IO[Unit] =
+    new ComputerDatabase[IO].program
 }

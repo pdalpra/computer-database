@@ -12,23 +12,17 @@ trait StringDecoder[A] { self =>
   def decode(s: String): Result[A]
 
   def map[B](f: A => B): StringDecoder[B] =
-    new StringDecoder[B] {
-      override def decode(s: String) = self.decode(s).map(f)
-    }
+    self.decode(_).map(f)
 
   def emap[B](validation: A => Result[B]): StringDecoder[B] =
-    new StringDecoder[B] {
-      override def decode(s: String) = self.decode(s).andThen(validation)
-    }
+    self.decode(_).andThen(validation)
 }
 
 object StringDecoder {
   def apply[A](implicit ev: StringDecoder[A]): StringDecoder[A] = ev
 
   def instance[A](f: String => Result[A]): StringDecoder[A] =
-    new StringDecoder[A] {
-      override def decode(s: String) = f(s)
-    }
+    f(_)
 
   implicit val decodeString: StringDecoder[String] = instance(_.valid)
 
@@ -42,7 +36,9 @@ object StringDecoder {
         .leftMap(new DateParseException(_))
     )
 
-  implicit def refinedDecoder[T: StringDecoder, P, F[_, _]: RefType](implicit validate: Validate[T, P]): StringDecoder[F[T, P]] =
+  implicit def refinedDecoder[T: StringDecoder, P, F[_, _]: RefType](implicit
+      validate: Validate[T, P]
+  ): StringDecoder[F[T, P]] =
     StringDecoder[T].emap { decoded =>
       val refined = RefType[F].refine(decoded).leftMap(new RefinedException(_))
       Validated.fromEither(refined)

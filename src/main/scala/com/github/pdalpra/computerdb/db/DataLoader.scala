@@ -2,13 +2,13 @@ package com.github.pdalpra.computerdb.db
 
 import com.github.pdalpra.computerdb.model._
 
-import cats.effect.{ Blocker, ContextShift, Sync }
+import cats.effect.Sync
 import cats.syntax.all._
 import fs2.io.unsafeReadInputStream
-import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
+import org.typelevel.log4cats.slf4j.Slf4jLogger
 import io.circe.Decoder
-import io.circe.fs2.{ byteArrayParser, decoder }
 import io.circe.refined._
+import io.circe.fs2._
 
 final case class InitialData(companies: List[NonEmptyString], computers: List[UnsavedComputer])
 
@@ -20,7 +20,7 @@ object DataLoader {
 
   private val chunkSize = 8192
 
-  def apply[F[_]: Sync: ContextShift](blocker: Blocker): DataLoader[F] =
+  def apply[F[_]: Sync]: DataLoader[F] =
     new DataLoader[F] {
       private val logger = Slf4jLogger.getLogger[F]
 
@@ -35,7 +35,7 @@ object DataLoader {
       private def readJsonFromClasspathResource[T: Decoder](resourceName: String): F[List[T]] = {
         val inputStream = Sync[F].delay(getClass.getClassLoader.getResourceAsStream(resourceName))
 
-        unsafeReadInputStream(inputStream, chunkSize, blocker)
+        unsafeReadInputStream(inputStream, chunkSize)
           .through(byteArrayParser)
           .through(decoder[F, T])
           .compile

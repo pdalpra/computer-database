@@ -7,6 +7,7 @@ import org.http4s._
 import org.http4s.implicits._
 
 package object http {
+  @SuppressWarnings(Array("org.wartremover.warts.OptionPartial")) // Option#get usage is wrongly detected
   def redirectToHome[F[_]: Applicative]: F[Response[F]] =
-    Response[F](status = Status.SeeOther, headers = Headers.of(Location(uri"/computers"))).pure[F]
+    Response[F](status = Status.SeeOther, headers = Headers(Location(uri"/computers"))).pure[F]
 }

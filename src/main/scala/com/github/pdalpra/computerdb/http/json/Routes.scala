@@ -3,9 +3,8 @@ package com.github.pdalpra.computerdb.http.json
 import com.github.pdalpra.computerdb.http._
 import com.github.pdalpra.computerdb.model._
 import com.github.pdalpra.computerdb.service._
-
 import cats.data.OptionT
-import cats.effect.Sync
+import cats.effect.kernel.Concurrent
 import cats.syntax.all._
 import io.circe.{ Encoder, Printer }
 import org.http4s._
@@ -19,10 +18,10 @@ private[http] object Routes {
 
   private val noSpacesNoNullsPrinter = Printer.noSpaces.copy(dropNullValues = true)
 
-  def apply[F[_]: Sync](computerService: ComputerService[F]): HttpRoutes[F] =
+  def apply[F[_]: Concurrent](computerService: ComputerService[F]): HttpRoutes[F] =
     new Routes[F](computerService).routes
 
-  private class Routes[F[_]: Sync](computerService: ComputerService[F]) extends Http4sDsl[F] with Extractors {
+  private class Routes[F[_]: Concurrent](computerService: ComputerService[F]) extends Http4sDsl[F] with Extractors {
 
     private implicit def circeEntityEncoder[A: Encoder]: EntityEncoder[F, A] =
       jsonEncoderWithPrinterOf(noSpacesNoNullsPrinter)
@@ -42,7 +41,9 @@ private[http] object Routes {
 
     private def computerReadRoutes =
       HttpRoutes.of[F] {
-        case GET -> Root :? PageNumber(page) +& PageSize(pageSize) +& Sort(sort) +& SortOrder(order) +& SearchQuery(rawQuery) =>
+        case GET -> Root :? PageNumber(page) +& PageSize(pageSize) +& Sort(sort) +& SortOrder(order) +& SearchQuery(
+              rawQuery
+            ) =>
           val query      = rawQuery.flatten
           val parameters = ComputerListParameters(page, pageSize, sort, order, query)
           Ok(computerService.fetchComputers(parameters))

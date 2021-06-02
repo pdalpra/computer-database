@@ -4,15 +4,14 @@ Compile / wartremoverErrors := Warts.allBut(
   Wart.Any,
   Wart.ImplicitParameter,
   Wart.Nothing,
-  Wart.StringPlusAny, // Buggy with Scala 2.13
+  Wart.StringPlusAny // Buggy with Scala 2.13
 )
 
-Test / wartremoverErrors := (Compile / wartremoverErrors)
-  .value
+Test / wartremoverErrors := (Compile / wartremoverErrors).value
   .diff(
     Seq(
       Wart.DefaultArguments,
-      Wart.NonUnitStatements,
+      Wart.NonUnitStatements
     )
   )
 

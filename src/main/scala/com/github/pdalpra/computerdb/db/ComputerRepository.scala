@@ -9,7 +9,7 @@ import cats.effect.Sync
 import cats.syntax.all._
 import doobie._
 import doobie.implicits._
-import doobie.implicits.javatime._
+import doobie.implicits.javatimedrivernative._
 import doobie.refined.implicits._
 
 trait ComputerRepository[F[_]] {
@@ -45,10 +45,12 @@ object ComputerRepository {
         val offset = (page.value - 1) * pageSize.value
 
         val normalizedFilter = nameFilter.map(_.value.toLowerCase(Locale.ENGLISH))
-        val filterFragment   = Fragments.whereAndOpt(normalizedFilter.map(name => fr"lower(computer.name) like ${s"%$name%"}"))
-        val sortFragment     = fr"order by " ++ Fragment.const(sort.column) ++ Fragment.const(order.show)
-        val pageQuery        = baseSelect ++ filterFragment ++ sortFragment ++ fr"nulls last limit $pageSize offset $offset"
-        val rowsCountQuery   = fr" select count(1) from computer left join company on computer.company_id = company.id" ++ filterFragment
+        val filterFragment =
+          Fragments.whereAndOpt(normalizedFilter.map(name => fr"lower(computer.name) like ${s"%$name%"}"))
+        val sortFragment = fr"order by " ++ Fragment.const(sort.column) ++ Fragment.const(order.show)
+        val pageQuery    = baseSelect ++ filterFragment ++ sortFragment ++ fr"nulls last limit $pageSize offset $offset"
+        val rowsCountQuery =
+          fr" select count(1) from computer left join company on computer.company_id = company.id" ++ filterFragment
 
         (for {
           list      <- pageQuery.query[Computer].to[List]
@@ -92,6 +94,6 @@ object ComputerRepository {
       @SuppressWarnings(Array("org.wartremover.warts.TryPartial"))
       private implicit val computerRead: Read[Computer] =
         Read[(Computer.Id, NonEmptyString, Option[LocalDate], Option[LocalDate], Option[Company])]
-          .map((Computer.apply _).tupled(_).leftMap(new IllegalArgumentException(_)).toTry.get)
+          .map((Computer.x _).tupled(_).leftMap(new IllegalArgumentException(_)).toTry.get)
     }
 }
