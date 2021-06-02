@@ -3,7 +3,7 @@ import java.time.format.DateTimeFormatter
 
 lintUnusedKeysOnLoad in Global := false
 
-scalaVersion := "2.13.3"
+scalaVersion := "2.13.5"
 scalafmtOnCompile := true
 
 lazy val It = config("it") extend Test
@@ -22,18 +22,18 @@ buildInfoKeys := Seq(
 
 addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
 
-val circeVersion      = "0.13.0"
-val doobieVersion     = "0.10.0"
+val circeVersion      = "0.14.1"
+val doobieVersion     = "1.0.0-M5"
 val enumeratumVersion = "1.6.1"
-val fs2Version        = "2.5.6"
-val http4sVersion     = "0.21.16"
-val pureconfigVersion = "0.14.1"
-val refinedVersion    = "0.9.23"
+val fs2Version        = "3.0.4"
+val http4sVersion     = "1.0.0-M23"
+val pureconfigVersion = "0.15.0"
+val refinedVersion    = "0.9.26"
 
 libraryDependencies ++= Seq(
   // Cats / Cats Effect
   "org.typelevel" %% "cats-core"   % "2.6.1",
-  "org.typelevel" %% "cats-effect" % "2.5.1",
+  "org.typelevel" %% "cats-effect" % "3.1.1",
   "org.typelevel" %% "kittens"     % "2.3.2",
   "org.typelevel" %% "mouse"       % "1.0.3",
   // Http4s / Scalatags
@@ -49,7 +49,7 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-generic" % circeVersion,
   "io.circe" %% "circe-parser"  % circeVersion,
   "io.circe" %% "circe-refined" % circeVersion,
-  "io.circe" %% "circe-fs2"     % circeVersion,
+  "io.circe" %% "circe-fs2"     % "0.14.0",
   // Doobie
   "org.tpolecat" %% "doobie-core" % doobieVersion,
   "org.tpolecat" %% "doobie-h2"   % doobieVersion,
@@ -62,8 +62,8 @@ libraryDependencies ++= Seq(
   "eu.timepit"   %% "refined-pureconfig" % refinedVersion,
   "org.tpolecat" %% "doobie-refined"     % doobieVersion,
   // Logging
-  "io.chrisdavenport" %% "log4cats-slf4j"  % "1.1.1",
-  "ch.qos.logback"     % "logback-classic" % "1.2.3" % Runtime,
+  "org.typelevel" %% "log4cats-slf4j"  % "2.1.1",
+  "ch.qos.logback" % "logback-classic" % "1.2.3" % Runtime,
   // Misc
   "com.beachape" %% "enumeratum"      % enumeratumVersion,
   "com.beachape" %% "enumeratum-cats" % enumeratumVersion,

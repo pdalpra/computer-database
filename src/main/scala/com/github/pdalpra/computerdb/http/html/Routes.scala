@@ -9,25 +9,26 @@ import com.github.pdalpra.computerdb.http.ScalatagsInstances._
 import com.github.pdalpra.computerdb.http._
 import com.github.pdalpra.computerdb.model._
 import com.github.pdalpra.computerdb.service._
-
 import cats.data.{ NonEmptyChain, OptionT }
-import cats.effect.Sync
+import cats.effect.kernel.Concurrent
 import cats.syntax.all._
 import org.http4s._
 import org.http4s.dsl.Http4sDsl
 
 private[http] object Routes {
 
-  def apply[F[_]: Sync](computerService: ComputerService[F]): HttpRoutes[F] =
+  def apply[F[_]: Concurrent](computerService: ComputerService[F]): HttpRoutes[F] =
     new Routes[F](computerService).routes
 
-  private class Routes[F[_]: Sync](computerService: ComputerService[F]) extends Http4sDsl[F] with Extractors {
+  private class Routes[F[_]: Concurrent](computerService: ComputerService[F]) extends Http4sDsl[F] with Extractors {
 
     def routes: HttpRoutes[F] = FlashCookie(computerReadRoutes <+> computerWriteRoutes)
 
     private def computerReadRoutes =
       HttpRoutes.of[F] {
-        case req @ GET -> Root :? PageNumber(page) +& PageSize(pageSize) +& Sort(sort) +& SortOrder(order) +& SearchQuery(rawQuery) =>
+        case req @ GET -> Root :? PageNumber(page) +& PageSize(pageSize) +& Sort(sort) +& SortOrder(
+              order
+            ) +& SearchQuery(rawQuery) =>
           val query      = rawQuery.flatten
           val parameters = ComputerListParameters(page, pageSize, sort, order, query)
 

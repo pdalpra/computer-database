@@ -7,19 +7,14 @@ trait FieldDecoder[A] { self =>
   def decodeField(urlForm: UrlForm, fieldName: String): FieldResult[A]
 
   def emap[B](validation: A => FieldResult[B]): FieldDecoder[B] =
-    new FieldDecoder[B] {
-      override def decodeField(urlForm: UrlForm, fieldName: String) =
-        self.decodeField(urlForm, fieldName).andThen(validation)
-    }
+    self.decodeField(_, _).andThen(validation)
 }
 
 object FieldDecoder {
   def apply[A](implicit ev: FieldDecoder[A]): FieldDecoder[A] = ev
 
   def instance[A](f: (UrlForm, String) => FieldResult[A]): FieldDecoder[A] =
-    new FieldDecoder[A] {
-      override def decodeField(urlForm: UrlForm, fieldName: String): FieldResult[A] = f(urlForm, fieldName)
-    }
+    f(_, _)
 
   implicit def idInstance[A: StringDecoder]: FieldDecoder[A] =
     instance { (urlForm, fieldName) =>

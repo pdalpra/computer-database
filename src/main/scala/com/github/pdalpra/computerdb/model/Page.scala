@@ -6,6 +6,8 @@ import io.circe.Encoder
 import io.circe.generic.semiauto._
 import io.circe.refined._
 
+import scala.annotation.nowarn
+
 object Page {
   type Number = Int Refined Positive
   type Size   = Int Refined NonNegative
@@ -16,6 +18,7 @@ object Page {
   val DefaultPage: Number   = Number.unsafeFrom(1)
   val DefaultPageSize: Size = Page.Size.unsafeFrom(10)
 
+  @nowarn // Encoder is detected as unused
   implicit def encoder[A: Encoder]: Encoder[Page[A]] = deriveEncoder
 }
 final case class Page[A](items: List[A], page: Page.Number, offset: Int, total: Int) {

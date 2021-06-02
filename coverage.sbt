@@ -1,2 +1,2 @@
-coverageMinimum := 80
+coverageMinimumStmtTotal := 80
 coverageFailOnMinimum := true

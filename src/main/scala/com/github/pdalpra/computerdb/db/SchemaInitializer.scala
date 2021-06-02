@@ -4,7 +4,7 @@ import cats.effect.Sync
 import cats.syntax.all._
 import doobie._
 import doobie.implicits._
-import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
+import org.typelevel.log4cats.slf4j.Slf4jLogger
 
 trait SchemaInitializer[F[_]] {
   def initSchema: F[Unit]

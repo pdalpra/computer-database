@@ -21,7 +21,7 @@ object Computer {
   }
   final case class Id(value: UniqueId)
 
-  def apply(
+  def x(
       id: Computer.Id,
       name: NonEmptyString,
       introduced: Option[LocalDate],
