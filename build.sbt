@@ -27,7 +27,7 @@ val doobieVersion     = "1.0.0-M5"
 val enumeratumVersion = "1.6.1"
 val fs2Version        = "3.0.4"
 val http4sVersion     = "1.0.0-M23"
-val pureconfigVersion = "0.15.0"
+val pureconfigVersion = "0.16.0"
 val refinedVersion    = "0.9.26"
 
 libraryDependencies ++= Seq(
