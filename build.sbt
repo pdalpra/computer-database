@@ -25,8 +25,8 @@ addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
 val circeVersion      = "0.14.1"
 val doobieVersion     = "1.0.0-RC1"
 val enumeratumVersion = "1.7.0"
-val fs2Version        = "3.1.4"
-val http4sVersion     = "1.0.0-M28"
+val fs2Version        = "3.1.5"
+val http4sVersion     = "1.0.0-M24"
 val pureconfigVersion = "0.17.0"
 val refinedVersion    = "0.9.27"
 
@@ -35,7 +35,7 @@ libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-core"   % "2.6.1",
   "org.typelevel" %% "cats-effect" % "3.2.9",
   "org.typelevel" %% "kittens"     % "2.3.2",
-  "org.typelevel" %% "mouse"       % "1.0.5",
+  "org.typelevel" %% "mouse"       % "1.0.6",
   // Http4s / Scalatags
   "org.http4s"  %% "http4s-circe"        % http4sVersion,
   "org.http4s"  %% "http4s-dsl"          % http4sVersion,
