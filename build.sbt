@@ -33,7 +33,7 @@ val refinedVersion    = "0.9.28"
 libraryDependencies ++= Seq(
   // Cats / Cats Effect
   "org.typelevel" %% "cats-core"   % "2.7.0",
-  "org.typelevel" %% "cats-effect" % "3.3.2",
+  "org.typelevel" %% "cats-effect" % "3.3.3",
   "org.typelevel" %% "kittens"     % "2.3.2",
   "org.typelevel" %% "mouse"       % "1.0.8",
   // Http4s / Scalatags
