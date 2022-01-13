@@ -3,7 +3,7 @@ import java.time.format.DateTimeFormatter
 
 lintUnusedKeysOnLoad in Global := false
 
-scalaVersion := "2.13.5"
+scalaVersion := "2.13.8"
 scalafmtOnCompile := true
 
 lazy val It = config("it") extend Test
