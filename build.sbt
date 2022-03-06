@@ -63,7 +63,7 @@ libraryDependencies ++= Seq(
   "org.tpolecat" %% "doobie-refined"     % doobieVersion,
   // Logging
   "org.typelevel" %% "log4cats-slf4j"  % "2.2.0",
-  "ch.qos.logback" % "logback-classic" % "1.2.10" % Runtime,
+  "ch.qos.logback" % "logback-classic" % "1.2.11" % Runtime,
   // Misc
   "com.beachape" %% "enumeratum"      % enumeratumVersion,
   "com.beachape" %% "enumeratum-cats" % enumeratumVersion,
