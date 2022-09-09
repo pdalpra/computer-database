@@ -25,7 +25,7 @@ addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
 val circeVersion      = "0.14.2"
 val doobieVersion     = "1.0.0-RC2"
 val enumeratumVersion = "1.7.0"
-val fs2Version        = "3.2.12"
+val fs2Version        = "3.2.14"
 val http4sVersion     = "1.0.0-M24"
 val pureconfigVersion = "0.17.1"
 val refinedVersion    = "0.9.29"
@@ -62,8 +62,8 @@ libraryDependencies ++= Seq(
   "eu.timepit"   %% "refined-pureconfig" % refinedVersion,
   "org.tpolecat" %% "doobie-refined"     % doobieVersion,
   // Logging
-  "org.typelevel" %% "log4cats-slf4j"  % "2.3.1",
-  "ch.qos.logback" % "logback-classic" % "1.2.11" % Runtime,
+  "org.typelevel" %% "log4cats-slf4j"  % "2.4.0",
+  "ch.qos.logback" % "logback-classic" % "1.4.0" % Runtime,
   // Misc
   "com.beachape" %% "enumeratum"      % enumeratumVersion,
   "com.beachape" %% "enumeratum-cats" % enumeratumVersion,
