@@ -25,7 +25,7 @@ addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
 val circeVersion      = "0.14.2"
 val doobieVersion     = "1.0.0-RC2"
 val enumeratumVersion = "1.7.0"
-val fs2Version        = "3.2.14"
+val fs2Version        = "3.3.0"
 val http4sVersion     = "1.0.0-M24"
 val pureconfigVersion = "0.17.1"
 val refinedVersion    = "0.9.29"
@@ -35,12 +35,12 @@ libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-core"   % "2.7.0",
   "org.typelevel" %% "cats-effect" % "3.3.12",
   "org.typelevel" %% "kittens"     % "2.3.2",
-  "org.typelevel" %% "mouse"       % "1.0.11",
+  "org.typelevel" %% "mouse"       % "1.2.0",
   // Http4s / Scalatags
   "org.http4s"  %% "http4s-circe"        % http4sVersion,
   "org.http4s"  %% "http4s-dsl"          % http4sVersion,
   "org.http4s"  %% "http4s-blaze-server" % http4sVersion,
-  "com.lihaoyi" %% "scalatags"           % "0.11.1",
+  "com.lihaoyi" %% "scalatags"           % "0.12.0",
   // FS2
   "co.fs2" %% "fs2-core" % fs2Version,
   "co.fs2" %% "fs2-io"   % fs2Version,
@@ -63,12 +63,12 @@ libraryDependencies ++= Seq(
   "org.tpolecat" %% "doobie-refined"     % doobieVersion,
   // Logging
   "org.typelevel" %% "log4cats-slf4j"  % "2.5.0",
-  "ch.qos.logback" % "logback-classic" % "1.4.0" % Runtime,
+  "ch.qos.logback" % "logback-classic" % "1.4.4" % Runtime,
   // Misc
   "com.beachape" %% "enumeratum"      % enumeratumVersion,
   "com.beachape" %% "enumeratum-cats" % enumeratumVersion,
   // Testing
-  "org.scalatest"     %% "scalatest"       % "3.2.13"  % "test,it",
+  "org.scalatest"     %% "scalatest"       % "3.2.14"  % "test,it",
   "org.scalatestplus" %% "scalacheck-1-14" % "3.2.2.0" % "test",
   "org.scalacheck"    %% "scalacheck"      % "1.16.0"  % "test"
 )
