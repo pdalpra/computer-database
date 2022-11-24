@@ -25,17 +25,17 @@ addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
 val circeVersion      = "0.14.2"
 val doobieVersion     = "1.0.0-RC2"
 val enumeratumVersion = "1.7.0"
-val fs2Version        = "3.3.0"
+val fs2Version        = "3.4.0"
 val http4sVersion     = "1.0.0-M24"
 val pureconfigVersion = "0.17.2"
-val refinedVersion    = "0.9.29"
+val refinedVersion    = "0.10.1"
 
 libraryDependencies ++= Seq(
   // Cats / Cats Effect
-  "org.typelevel" %% "cats-core"   % "2.8.0",
-  "org.typelevel" %% "cats-effect" % "3.3.14",
+  "org.typelevel" %% "cats-core"   % "2.9.0",
+  "org.typelevel" %% "cats-effect" % "3.4.1",
   "org.typelevel" %% "kittens"     % "3.0.0",
-  "org.typelevel" %% "mouse"       % "1.2.0",
+  "org.typelevel" %% "mouse"       % "1.2.1",
   // Http4s / Scalatags
   "org.http4s"  %% "http4s-circe"        % http4sVersion,
   "org.http4s"  %% "http4s-dsl"          % http4sVersion,
@@ -63,7 +63,7 @@ libraryDependencies ++= Seq(
   "org.tpolecat" %% "doobie-refined"     % doobieVersion,
   // Logging
   "org.typelevel" %% "log4cats-slf4j"  % "2.5.0",
-  "ch.qos.logback" % "logback-classic" % "1.4.4" % Runtime,
+  "ch.qos.logback" % "logback-classic" % "1.4.5" % Runtime,
   // Misc
   "com.beachape" %% "enumeratum"      % enumeratumVersion,
   "com.beachape" %% "enumeratum-cats" % enumeratumVersion,
