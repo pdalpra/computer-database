@@ -26,7 +26,7 @@ val circeVersion      = "0.14.2"
 val doobieVersion     = "1.0.0-RC2"
 val enumeratumVersion = "1.7.2"
 val fs2Version        = "3.4.0"
-val http4sVersion     = "1.0.0-M38"
+val http4sVersion     = "1.0.0-M24"
 val pureconfigVersion = "0.17.2"
 val refinedVersion    = "0.10.1"
 
